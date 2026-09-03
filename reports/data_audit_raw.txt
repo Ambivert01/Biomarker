@@ -1,0 +1,345 @@
+
+==========================================================================================
+1. SHEET SHAPES
+==========================================================================================
+Diagnosis_1                  shape=(6531, 10)
+Diagnosis_2                  shape=(6586, 10)
+Diagnosis_3                  shape=(3020, 10)
+Unique_Patients_All          shape=(3700, 12)
+Biomarkers                   shape=(2295, 16)
+Final_Summary                shape=(3700, 17)
+Final_Biomarker_Patients     shape=(889, 17)
+
+==========================================================================================
+2. DIAGNOSIS_1/2/3 — are these VISIT-level (longitudinal) or patient-level?
+==========================================================================================
+Diagnosis_1: rows=6531, unique RID=1713, => 4818 extra visit-rows beyond 1/patient (VISIT-LEVEL, multiple rows/patient)
+Diagnosis_2: rows=6586, unique RID=1757, => 4829 extra visit-rows beyond 1/patient (VISIT-LEVEL, multiple rows/patient)
+Diagnosis_3: rows=3020, unique RID=1022, => 1998 extra visit-rows beyond 1/patient (VISIT-LEVEL, multiple rows/patient)
+
+==========================================================================================
+2b. Does the SAME RID appear in more than one of Diagnosis_1/2/3?
+==========================================================================================
+RID in both Diagnosis_1 & Diagnosis_2 (CN and MCI at different visits): 317
+RID in both Diagnosis_1 & Diagnosis_3 (CN and Dementia at different visits): 55
+RID in both Diagnosis_2 & Diagnosis_3 (MCI and Dementia at different visits): 465
+RID in all three: 45
+=> This confirms DIAGNOSIS is PER-VISIT (patients convert/revert over time), not a fixed patient attribute. This is central to how 'Final_Biomarker_Patients' must be interpreted: DIAGNOSIS reflects the diagnosis AT THE SELECTED VISIT, not a lifetime label.
+
+==========================================================================================
+3. UNIQUE_PATIENTS_ALL — one row per patient?
+==========================================================================================
+rows: 3700 unique RID: 3700 unique PTID: 3700
+Duplicated RID rows in Unique_Patients_All: 0
+
+Diagnosis distribution (Unique_Patients_All):
+GROUP
+Control     1494
+MCI         1206
+Dementia    1000
+Name: count, dtype: int64
+
+MMSE missing count: 869 / 3700
+
+==========================================================================================
+4. BIOMARKERS SHEET — visit-level or patient-level? matched on RID only per header
+==========================================================================================
+rows: 2295 unique RID: 1593 unique PTID: 1593
+=> header says 'matched on RID only' meaning a patient's biomarker visit was matched to
+   ANY diagnosis record for that RID, not necessarily the SAME visit (VISCODE). Checking...
+Rows sharing an RID with another row in Biomarkers sheet: 1267  -> patients with >1 biomarker visit: 565
+
+==========================================================================================
+5. FINAL_SUMMARY — matched on RID+VISCODE (per header)
+==========================================================================================
+rows: 3700 unique RID: 3700 unique (RID,VISCODE): 3700
+Rows with a duplicated RID (i.e. patient has >1 visit row in Final_Summary): 0
+Unique patients with >1 row: 0
+
+How many rows actually HAVE non-null biomarker data (pT217_F not null)?
+889 out of 3700
+
+==========================================================================================
+6. FINAL_BIOMARKER_PATIENTS — the core modeling table. Verify 'one row per patient'.
+==========================================================================================
+rows: 889
+unique RID: 889
+unique PTID: 889
+Rows with duplicated RID: 0 | unique RIDs affected: 0
+
+Rows with duplicated PTID: 0
+Fully duplicated rows (all columns identical): 0
+
+==========================================================================================
+6b. Documentation claim: 889 patients, Control 343 (38.6%), MCI 315 (35.4%), Dementia 231 (26.0%)
+==========================================================================================
+          count   pct
+GROUP                
+Control     343  38.6
+MCI         315  35.4
+Dementia    231  26.0
+Total: 889
+
+==========================================================================================
+6c. Documentation claim: 5 phases ADNI1,2,3,4,ADNIGO
+==========================================================================================
+PHASE
+ADNI4     568
+ADNI3     161
+ADNI2     102
+ADNI1      55
+ADNIGO      3
+Name: count, dtype: int64
+
+==========================================================================================
+6d. Datatypes in Final_Biomarker_Patients
+==========================================================================================
+PHASE                   str
+PTID                    str
+RID                   int64
+VISCODE                 str
+EXAMDATE                str
+DIAGNOSIS             int64
+GROUP                   str
+MMSE_FINAL_SCORE    float64
+pT217_F             float64
+AB42_F              float64
+AB40_F              float64
+AB42_AB40_F         float64
+pT217_AB42_F        float64
+NfL_Q               float64
+GFAP_Q              float64
+NfL_F               float64
+GFAP_F              float64
+dtype: object
+
+==========================================================================================
+6e. Missingness in Final_Biomarker_Patients (count + %)
+==========================================================================================
+                  missing_count  missing_pct
+MMSE_FINAL_SCORE            355        39.93
+PHASE                         0         0.00
+PTID                          0         0.00
+VISCODE                       0         0.00
+RID                           0         0.00
+EXAMDATE                      0         0.00
+DIAGNOSIS                     0         0.00
+GROUP                         0         0.00
+pT217_F                       0         0.00
+AB42_F                        0         0.00
+AB40_F                        0         0.00
+AB42_AB40_F                   0         0.00
+pT217_AB42_F                  0         0.00
+NfL_Q                         0         0.00
+GFAP_Q                        0         0.00
+NfL_F                         0         0.00
+GFAP_F                        0         0.00
+
+==========================================================================================
+6f. -4 sentinel counts per biomarker column (BLoQ marker per docs)
+==========================================================================================
+NfL_Q           == -4:  430   | <0 (any negative):  431   | min=-5.0
+GFAP_Q          == -4:  430   | <0 (any negative):  431   | min=-5.0
+NfL_F           == -4:  321   | <0 (any negative):  321   | min=-4.0
+GFAP_F          == -4:  321   | <0 (any negative):  321   | min=-4.0
+pT217_F         == -4:    0   | <0 (any negative):    0   | min=0.03
+AB42_F          == -4:    3   | <0 (any negative):    3   | min=-4.0
+AB40_F          == -4:    2   | <0 (any negative):    2   | min=-4.0
+AB42_AB40_F     == -4:    3   | <0 (any negative):    3   | min=-4.0
+pT217_AB42_F    == -4:    3   | <0 (any negative):    3   | min=-4.0
+
+==========================================================================================
+6g. Are -4 values EXCLUSIVE to NfL_F / GFAP_F, or do other cols also have them (doc only mentions NfL_F, GFAP_F)?
+==========================================================================================
+AB42_F: 3 rows == -4
+AB40_F: 2 rows == -4
+AB42_AB40_F: 3 rows == -4
+pT217_AB42_F: 3 rows == -4
+NfL_Q: 430 rows == -4
+GFAP_Q: 430 rows == -4
+NfL_F: 321 rows == -4
+GFAP_F: 321 rows == -4
+
+==========================================================================================
+6h. Row-wise: how many biomarkers are -4 or NaN per row? (severity of BLoQ / missingness per patient)
+==========================================================================================
+Distribution of # bad (missing or -4) Fujirebio fields per patient (of 7):
+n_bad_F
+0    567
+2    319
+3      1
+6      2
+Name: count, dtype: int64
+
+Distribution of # bad (missing or -4) Quanterix fields per patient (of 2):
+n_bad_Q
+0    459
+2    430
+Name: count, dtype: int64
+
+==========================================================================================
+6i. Are NfL_Q/GFAP_Q ever missing/-4, or only NfL_F/GFAP_F (as doc implies)?
+==========================================================================================
+NfL_Q isna: 0  == -4: 430
+GFAP_Q isna: 0  == -4: 430
+NfL_F isna: 0  == -4: 321
+GFAP_F isna: 0  == -4: 321
+
+==========================================================================================
+6j. Complete-case count across ALL 5 'primary' biomarkers (pT217_F, AB42_F, AB40_F, NfL, GFAP) — doc claims 567
+==========================================================================================
+Complete cases using NfL_F & GFAP_F  : 567
+Complete cases using NfL_Q & GFAP_Q  : 456
+Complete cases using coalesced NfL_best & GFAP_best: 886
+
+==========================================================================================
+6k. Recompute group means for pTau217, AB42, AB40, NfL, GFAP on complete-case (Q-based, since doc numbers look like NfL_Q/GFAP_Q scale) subset, compare to doc Table 5.5
+==========================================================================================
+N = 456
+          pT217_F  AB42_F   AB40_F   NfL_Q   GFAP_Q
+DXLABEL                                            
+Control     0.188  28.189  329.427  20.099  157.938
+Dementia    0.748  25.798  320.468  35.554  281.558
+MCI         0.428  26.818  319.631  26.341  218.905
+
+==========================================================================================
+6l. Same but using NfL_best/GFAP_best coalesced, and using DIAGNOSIS_F complete mask
+==========================================================================================
+N = 886
+          pT217_F  AB42_F   AB40_F  NfL_best  GFAP_best
+GROUP                                                  
+Control     0.180  27.994  324.834    20.968    107.761
+Dementia    0.767  26.546  335.235    35.908    239.236
+MCI         0.347  27.774  343.037    28.928    136.627
+
+==========================================================================================
+7. AB42_AB40_F and pT217_AB42_F — verify these are correctly computed ratios (not garbage/leakage columns)
+==========================================================================================
+Max abs diff between AB42_F/AB40_F and stored AB42_AB40_F: 4.9901698520649074e-05
+Rows with diff > 1e-4: 0 out of 886
+Max abs diff pT217_F/AB42_F vs stored pT217_AB42_F: 4.996451383960758e-06
+Rows with diff > 1e-4: 0 out of 886
+
+==========================================================================================
+8. DUPLICATE / CONSTANT / NEAR-CONSTANT COLUMN CHECK on Final_Biomarker_Patients
+==========================================================================================
+PHASE                n_unique=5
+PTID                 n_unique=889
+RID                  n_unique=889
+VISCODE              n_unique=25
+EXAMDATE             n_unique=573
+DIAGNOSIS            n_unique=3
+GROUP                n_unique=3
+MMSE_FINAL_SCORE     n_unique=29
+pT217_F              n_unique=520
+AB42_F               n_unique=723
+AB40_F               n_unique=864
+AB42_AB40_F          n_unique=699
+pT217_AB42_F         n_unique=856
+NfL_Q                n_unique=305
+GFAP_Q               n_unique=430
+NfL_F                n_unique=526
+GFAP_F               n_unique=450
+NfL_best             n_unique=676
+GFAP_best            n_unique=753
+
+==========================================================================================
+9. VISCODE consistency — phase-prefix check
+==========================================================================================
+VISCODE
+4_bl      252
+4_m12     143
+4_init    125
+bl         95
+4_m24      46
+v11        33
+y1         26
+m24        25
+v21        23
+init       16
+v41        16
+y2         15
+m36        14
+v31        13
+v06        10
+y4          9
+m12         6
+m48         6
+v05         4
+v51         3
+Name: count, dtype: int64
+
+Does VISCODE prefix match PHASE consistently? sample check for ADNI4 rows:
+VISCODE
+4_bl      252
+4_m12     143
+4_init    125
+4_m24      46
+4_sc        2
+Name: count, dtype: int64
+
+==========================================================================================
+10. EXAMDATE range & parse check
+==========================================================================================
+raw dtype: str
+Unparseable EXAMDATE strings: 0
+min: 2007-03-09 00:00:00 max: 2026-05-08 00:00:00
+Rows with EXAMDATE after TODAY (2026-07-18) -- i.e. in-dataset 'future' scheduled visits: 0
+
+==========================================================================================
+11. MMSE range check (should be 0-30)
+==========================================================================================
+count    534.000000
+mean      24.619850
+std        5.931097
+min       -1.000000
+25%       22.000000
+50%       27.000000
+75%       29.000000
+max       30.000000
+Name: MMSE_FINAL_SCORE, dtype: float64
+Out of range (<0 or >30): 2
+MMSE missing: 355
+
+MMSE by group (mean):
+               mean       std  count
+GROUP                               
+Control   28.815287  1.505638    157
+Dementia  18.777778  6.123145    189
+MCI       26.989362  2.400956    188
+
+==========================================================================================
+12. DIAGNOSIS vs GROUP consistency
+==========================================================================================
+GROUP      Control  Dementia  MCI
+DIAGNOSIS                        
+1              343         0    0
+2                0         0  315
+3                0       231    0
+
+==========================================================================================
+13. Outlier scan (IQR method) on each numeric biomarker, excluding -4 sentinel and NaN
+==========================================================================================
+pT217_F         n= 889  min=     0.030 max=     5.555  IQR outliers=  41 (4.6%)
+AB42_F          n= 886  min=     7.240 max=   118.440  IQR outliers=  13 (1.5%)
+AB40_F          n= 887  min=    70.000 max=  1927.000  IQR outliers=  32 (3.6%)
+AB42_AB40_F     n= 886  min=     0.025 max=     0.165  IQR outliers=  12 (1.4%)
+pT217_AB42_F    n= 886  min=     0.001 max=     0.215  IQR outliers=  50 (5.6%)
+NfL_Q           n= 459  min=    -5.000 max=   278.000  IQR outliers=  18 (3.9%)
+GFAP_Q          n= 459  min=    -5.000 max=   816.700  IQR outliers=  12 (2.6%)
+NfL_F           n= 568  min=     6.250 max=   419.720  IQR outliers=  29 (5.1%)
+GFAP_F          n= 568  min=    15.800 max=  2478.100  IQR outliers=  26 (4.6%)
+MMSE_FINAL_SCORE n= 534  min=    -1.000 max=    30.000  IQR outliers=  25 (4.7%)
+
+==========================================================================================
+14. Cross-check: does Final_Biomarker_Patients == Final_Summary restricted to non-null biomarkers?
+==========================================================================================
+Final_Summary rows with non-null pT217_F: 889
+Final_Biomarker_Patients rows: 889
+_merge
+both          889
+left_only       0
+right_only      0
+Name: count, dtype: int64
+
+DONE.

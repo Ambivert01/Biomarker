@@ -1,0 +1,7 @@
+{
+  "n_layers": 1,
+  "layer_size": 64,
+  "alpha": 0.0005820929863690655,
+  "learning_rate_init": 0.005108000941674708,
+  "activation": "relu"
+}

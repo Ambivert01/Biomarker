@@ -1,0 +1,66 @@
+
+==========================================================================================
+I. Diagnosis distribution by PHASE (confounding check)
+==========================================================================================
+GROUP   Control  Dementia  MCI
+PHASE                         
+ADNI1         2        46    7
+ADNI2        15        68   19
+ADNI3        64        39   58
+ADNI4       262        75  231
+ADNIGO        0         3    0
+
+Row %:
+GROUP   Control  Dementia   MCI
+PHASE                          
+ADNI1       3.6      83.6  12.7
+ADNI2      14.7      66.7  18.6
+ADNI3      39.8      24.2  36.0
+ADNI4      46.1      13.2  40.7
+ADNIGO      0.0     100.0   0.0
+
+Chi-square test PHASE vs GROUP: chi2=241.22, p=1.25e-47, dof=8
+
+==========================================================================================
+J. Assay agreement: patients with BOTH Fuji (NfL_F/GFAP_F) and Quanterix (NfL_Q/GFAP_Q) valid
+==========================================================================================
+N patients with both platforms valid: 138
+
+NfL_F vs NfL_Q  (n=138):
+  Pearson r=0.934  Spearman r=0.918
+  mean(NfL_F)=27.45  mean(NfL_Q)=19.37  ratio mean=1.496 median=1.465
+  mean diff (F-Q)=8.08  std diff=5.49
+
+GFAP_F vs GFAP_Q  (n=138):
+  Pearson r=0.793  Spearman r=0.915
+  mean(GFAP_F)=75.60  mean(GFAP_Q)=197.98  ratio mean=0.415 median=0.376
+  mean diff (F-Q)=-122.38  std diff=81.24
+
+==========================================================================================
+K. By GROUP, agreement subset - does relative platform bias hold across diagnostic groups?
+==========================================================================================
+Control (n=86): NfL_F/NfL_Q ratio median=1.449  GFAP_F/GFAP_Q ratio median=0.381
+MCI (n=35): NfL_F/NfL_Q ratio median=1.485  GFAP_F/GFAP_Q ratio median=0.363
+Dementia (n=17): NfL_F/NfL_Q ratio median=1.488  GFAP_F/GFAP_Q ratio median=0.385
+
+==========================================================================================
+L. Predictive check: does raw NfL_F (unimputed, -4 kept as-is) separate groups only because of WHICH phase submitted it?
+==========================================================================================
+GROUP    Control  Dementia    MCI
+fuji_ok                          
+False      0.252     0.486  0.262
+True       0.461     0.132  0.407
+(Recall fuji_ok is ~100% determined by PHASE==ADNI4, so this mostly reflects phase-group mix, see section I)
+
+==========================================================================================
+M. Skewness of raw biomarkers (motivates log-transform)
+==========================================================================================
+pT217_F    skew=3.521  skew(log1p)=1.508
+AB42_F     skew=2.883  skew(log1p)=-0.305
+AB40_F     skew=6.200  skew(log1p)=0.233
+NfL_F      skew=9.434  skew(log1p)=0.805
+GFAP_F     skew=18.167  skew(log1p)=0.611
+NfL_Q      skew=5.215  skew(log1p)=0.251
+GFAP_Q     skew=1.294  skew(log1p)=-0.442
+
+DONE

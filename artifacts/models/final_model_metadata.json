@@ -1,0 +1,109 @@
+{
+  "model_name": "lightgbm",
+  "calibration_method": "isotonic",
+  "feature_set": "core_plus_engineered_plus_mmse",
+  "features": [
+    "pT217_F",
+    "AB42_F",
+    "AB40_F",
+    "AB42_AB40_F",
+    "pT217_AB42_F",
+    "NfL_harmonized",
+    "GFAP_harmonized",
+    "GFAP_NfL_ratio",
+    "AB40_minus_AB42",
+    "pT217_GFAP_product",
+    "log_pT217_F",
+    "log_AB40_F",
+    "log_NfL_harmonized",
+    "log_GFAP_harmonized",
+    "rank_pT217_F",
+    "rank_AB42_F",
+    "rank_AB40_F",
+    "rank_NfL_harmonized",
+    "rank_GFAP_harmonized",
+    "MMSE_FINAL_SCORE",
+    "MMSE_missing"
+  ],
+  "hyperparameters": {
+    "n_estimators": 400,
+    "max_depth": 6,
+    "num_leaves": 32,
+    "learning_rate": 0.0033642012623383575,
+    "subsample": 0.707289201615861,
+    "colsample_bytree": 0.6887194615526172,
+    "reg_alpha": 0.020211660841900004,
+    "reg_lambda": 0.0016518061042243804,
+    "min_child_samples": 8
+  },
+  "imputation_strategy": "median",
+  "scaling_strategy": "robust",
+  "random_seed": 42,
+  "n_dev": 755,
+  "n_test": 134,
+  "test_metrics": {
+    "accuracy": 0.6194029850746269,
+    "balanced_accuracy": 0.6090289143480633,
+    "macro_f1": 0.6012039502021288,
+    "weighted_f1": 0.6022719060807308,
+    "mcc": 0.4239731078771607,
+    "cohen_kappa": 0.41429550908467594,
+    "precision_Control": 0.6428571428571429,
+    "recall_Control": 0.8653846153846154,
+    "f1_Control": 0.7377049180327869,
+    "precision_MCI": 0.5,
+    "recall_MCI": 0.3617021276595745,
+    "f1_MCI": 0.41975308641975306,
+    "precision_Dementia": 0.7,
+    "recall_Dementia": 0.6,
+    "f1_Dementia": 0.6461538461538462,
+    "confusion_matrix": [
+      [
+        45,
+        6,
+        1
+      ],
+      [
+        22,
+        17,
+        8
+      ],
+      [
+        3,
+        11,
+        21
+      ]
+    ],
+    "roc_auc_ovr_macro": 0.7841123117895572,
+    "roc_auc_ovr_weighted": 0.7763863894078047,
+    "roc_auc_Control_vs_rest": 0.8406425891181989,
+    "roc_auc_MCI_vs_rest": 0.6177549523110786,
+    "roc_auc_Dementia_vs_rest": 0.893939393939394,
+    "brier_score_mean": 0.1654760065466455,
+    "brier_Control": 0.1564945477751213,
+    "brier_MCI": 0.22140293167474998,
+    "brier_Dementia": 0.11853054019006522
+  },
+  "bootstrap_ci_95": {
+    "accuracy": [
+      0.6208582089552238,
+      0.5373134328358209,
+      0.7014925373134329
+    ],
+    "macro_f1": [
+      0.5999949952504853,
+      0.5218972181376528,
+      0.6798836340269808
+    ],
+    "balanced_accuracy": [
+      0.6099644343613012,
+      0.5332550235633152,
+      0.6889549474319588
+    ],
+    "recall_Dementia": [
+      0.6020265235495733,
+      0.4443798449612403,
+      0.7631965944272446
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "max_iter": 300,
+  "max_depth": 12,
+  "learning_rate": 0.0022569170955928463,
+  "l2_regularization": 5.7978939614000754e-05,
+  "min_samples_leaf": 16,
+  "max_leaf_nodes": 7
+}

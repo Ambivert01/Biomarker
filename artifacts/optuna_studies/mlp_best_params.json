@@ -1,0 +1,7 @@
+{
+  "n_layers": 3,
+  "layer_size": 128,
+  "alpha": 0.018147687686004606,
+  "learning_rate_init": 0.0015295262909605916,
+  "activation": "tanh"
+}

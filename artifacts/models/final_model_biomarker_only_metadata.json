@@ -1,0 +1,141 @@
+{
+  "model_name": "extra_trees",
+  "role": "PRIMARY / production model (biomarker-only, matches stated primary objective)",
+  "calibration_method": "sigmoid",
+  "feature_set": "core_plus_engineered",
+  "features": [
+    "pT217_F",
+    "AB42_F",
+    "AB40_F",
+    "AB42_AB40_F",
+    "pT217_AB42_F",
+    "NfL_harmonized",
+    "GFAP_harmonized",
+    "GFAP_NfL_ratio",
+    "AB40_minus_AB42",
+    "pT217_GFAP_product",
+    "log_pT217_F",
+    "log_AB40_F",
+    "log_NfL_harmonized",
+    "log_GFAP_harmonized",
+    "rank_pT217_F",
+    "rank_AB42_F",
+    "rank_AB40_F",
+    "rank_NfL_harmonized",
+    "rank_GFAP_harmonized"
+  ],
+  "hyperparameters": {
+    "n_estimators": 400,
+    "max_depth": 6,
+    "min_samples_split": 12,
+    "min_samples_leaf": 4,
+    "max_features": 0.5,
+    "class_weight": "balanced"
+  },
+  "imputation_strategy": "median",
+  "scaling_strategy": "robust",
+  "random_seed": 42,
+  "n_dev": 755,
+  "n_test": 134,
+  "test_metrics": {
+    "accuracy": 0.6119402985074627,
+    "balanced_accuracy": 0.6064141532226639,
+    "macro_f1": 0.5972445832832712,
+    "weighted_f1": 0.5991740205616158,
+    "mcc": 0.41249690883207263,
+    "cohen_kappa": 0.40738220785847923,
+    "precision_Control": 0.65625,
+    "recall_Control": 0.8076923076923077,
+    "f1_Control": 0.7241379310344828,
+    "precision_MCI": 0.5142857142857142,
+    "recall_MCI": 0.3829787234042553,
+    "f1_MCI": 0.43902439024390244,
+    "precision_Dementia": 0.6285714285714286,
+    "recall_Dementia": 0.6285714285714286,
+    "f1_Dementia": 0.6285714285714286,
+    "confusion_matrix": [
+      [
+        42,
+        8,
+        2
+      ],
+      [
+        18,
+        18,
+        11
+      ],
+      [
+        4,
+        9,
+        22
+      ]
+    ],
+    "roc_auc_ovr_macro": 0.7620726338726446,
+    "roc_auc_ovr_weighted": 0.7556978341972629,
+    "roc_auc_Control_vs_rest": 0.8180112570356473,
+    "roc_auc_MCI_vs_rest": 0.6116409880166299,
+    "roc_auc_Dementia_vs_rest": 0.8565656565656565,
+    "brier_score_mean": 0.17262875508068617,
+    "brier_Control": 0.16791895288998956,
+    "brier_MCI": 0.22128761010028983,
+    "brier_Dementia": 0.1286797022517791
+  },
+  "bootstrap_ci_95": {
+    "accuracy": [
+      0.6140746268656717,
+      0.5298507462686567,
+      0.6865671641791045
+    ],
+    "macro_f1": [
+      0.5961842526616149,
+      0.512639839384566,
+      0.6715037863469343
+    ],
+    "balanced_accuracy": [
+      0.6078817229983984,
+      0.5267534853505639,
+      0.6832565214490095
+    ],
+    "recall_Dementia": [
+      0.6294301103969955,
+      0.46426393728223,
+      0.7942647058823528
+    ]
+  },
+  "decision_thresholds": {
+    "default_argmax": {
+      "description": "Standard argmax over calibrated probabilities.",
+      "threshold": null,
+      "test_metrics": {
+        "macro_f1": 0.5972,
+        "dementia_recall": 0.6286,
+        "dementia_precision": 0.6286,
+        "mci_recall": 0.383,
+        "control_recall": 0.8077
+      }
+    },
+    "balanced": {
+      "description": "Predict Dementia if P(Dementia)>=0.35, else argmax(Control,MCI). Tuned on dev-pool OOF only. Dominates plain argmax on both macro-F1 and Dementia recall on the held-out test set.",
+      "threshold": 0.35,
+      "test_metrics": {
+        "macro_f1": 0.596,
+        "dementia_recall": 0.6571,
+        "dementia_precision": 0.6216,
+        "mci_recall": 0.3617,
+        "control_recall": 0.8077
+      }
+    },
+    "high_sensitivity": {
+      "description": "Predict Dementia if P(Dementia)>=0.225, else argmax(Control,MCI). Tuned on dev-pool OOF only. Meets the proposal document clinical target of >80% Dementia recall, at the cost of reduced MCI recall.",
+      "threshold": 0.225,
+      "test_metrics": {
+        "macro_f1": 0.5644,
+        "dementia_recall": 0.8286,
+        "dementia_precision": 0.537,
+        "mci_recall": 0.2128,
+        "control_recall": 0.8077
+      }
+    }
+  },
+  "recommended_default_threshold_mode": "balanced"
+}

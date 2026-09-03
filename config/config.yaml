@@ -1,0 +1,79 @@
+# ADNI Plasma Biomarker AD Classifier — Central Configuration
+# Every tunable constant used by the pipeline lives here, not hardcoded in source.
+
+random_seed: 42
+
+data:
+  raw_excel_path: "/mnt/user-data/uploads/ADNI_Diagnosis_Patients__2_.xlsx"
+  sheet_name: "Final_Biomarker_Patients"
+  header_row: 1          # row index (0-based) that holds the real column names
+  target_column: "DIAGNOSIS"
+  group_column: "GROUP"
+  id_columns: ["RID", "PTID"]
+  class_labels:           # DIAGNOSIS int -> readable label, and the canonical class order
+    1: "Control"
+    2: "MCI"
+    3: "Dementia"
+  class_order: ["Control", "MCI", "Dementia"]
+
+sentinels:
+  # Any biomarker value strictly less than this is treated as BLoQ/missing.
+  # Audit found -4.0 AND an undocumented -5.0 in NfL_Q/GFAP_Q, plus stray -4.0 in AB42_F/AB40_F.
+  negative_value_threshold: 0.0
+  mmse_valid_range: [0, 30]   # MMSE=-1 found in audit -> outside this range -> NaN
+
+columns:
+  raw_biomarkers_fujirebio: ["pT217_F", "AB42_F", "AB40_F", "AB42_AB40_F", "pT217_AB42_F"]
+  raw_biomarkers_nfl_gfap_fuji: ["NfL_F", "GFAP_F"]
+  raw_biomarkers_quanterix: ["NfL_Q", "GFAP_Q"]
+  mmse_column: "MMSE_FINAL_SCORE"
+  phase_column: "PHASE"
+  viscode_column: "VISCODE"
+  examdate_column: "EXAMDATE"
+
+harmonization:
+  # Empirically derived from the 138 patients with BOTH platforms valid (see DATA_AUDIT_REPORT.md section 3.4).
+  # ratio = Fujirebio / Quanterix, stable across diagnostic groups (<=6% relative variation) -> safe to use
+  # as a fixed multiplicative calibration factor rather than a learned one (avoids any leakage from fitting
+  # this on the full dataset including test folds).
+  nfl_fuji_to_quanterix_ratio: 1.465   # median ratio from audit
+  gfap_fuji_to_quanterix_ratio: 0.376  # median ratio from audit
+
+splits:
+  test_size: 0.15
+  val_size: 0.15          # taken out of the remaining (train+val) pool, i.e. ~15% of total
+  n_splits_cv: 5
+  stratify_on: "GROUP"
+
+imputation:
+  candidate_strategies: ["median", "knn", "iterative"]
+  knn_neighbors: 5
+
+optuna:
+  n_trials_per_model: 40
+  timeout_seconds_per_model: 300
+  cv_folds_for_hpo: 5
+  scoring: "f1_macro"       # primary HPO objective; dementia recall reported alongside and used as tiebreaker
+
+models_to_benchmark:
+  - logistic_regression
+  - random_forest
+  - extra_trees
+  - xgboost
+  - lightgbm
+  - catboost
+  - hist_gradient_boosting
+  - svm
+  - mlp
+
+evaluation:
+  bootstrap_iterations: 1000     # for 95% CI on test metrics
+  calibration_method: "isotonic" # isotonic vs sigmoid(platt) both tried, best kept
+  dementia_recall_floor: 0.80    # clinical target from the proposal doc
+
+paths:
+  artifacts_dir: "../artifacts"
+  models_dir: "../artifacts/models"
+  plots_dir: "../artifacts/plots"
+  reports_dir: "../reports"
+  eda_dir: "../reports/figures"

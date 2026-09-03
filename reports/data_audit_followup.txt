@@ -1,0 +1,113 @@
+
+==========================================================================================
+A. Group means on the F-column complete-case subset (n=567) to match doc Table 5.5
+==========================================================================================
+N = 567
+          pT217_F  AB42_F   AB40_F   NfL_F   GFAP_F
+GROUP                                              
+Control     0.176  28.198  328.796  22.296   59.656
+Dementia    0.783  28.585  373.367  37.047  117.632
+MCI         0.330  28.170  353.127  30.820   87.578
+
+Doc claims: pTau217 CN=0.176 MCI=0.330 Dem=0.783 | AB42 CN=28.20 MCI=28.17 Dem=28.59
+            AB40 CN=328.80 MCI=353.13 Dem=373.37 | NfL CN=22.30 MCI=30.82 Dem=37.05
+            GFAP CN=59.66 MCI=87.58 Dem=117.63
+
+==========================================================================================
+B. NfL_Q / GFAP_Q sentinel breakdown: -4 vs -5 vs other negatives
+==========================================================================================
+NfL_Q negative value counts:
+ NfL_Q
+-4.0    430
+-5.0      1
+Name: count, dtype: int64
+GFAP_Q negative value counts:
+ GFAP_Q
+-4.0    430
+-5.0      1
+Name: count, dtype: int64
+
+==========================================================================================
+C. Platform complementarity: Fuji-clean vs Quanterix-clean vs both, and relation to PHASE
+==========================================================================================
+Rows: Fuji NfL/GFAP OK (T/F) x Cols: Quanterix NfL/GFAP OK (T/F)
+quant_NfL_GFAP_ok  False  True 
+fuji_NfL_GFAP_ok               
+False                  1    320
+True                 430    138
+
+By PHASE, % with usable Fuji NfL/GFAP vs Quanterix NfL/GFAP:
+          n  fuji_ok_pct  quant_ok_pct
+PHASE                                 
+ADNI1    55          0.0         100.0
+ADNI2   102          0.0         100.0
+ADNI3   161          0.0          99.4
+ADNI4   568        100.0          24.3
+ADNIGO    3          0.0         100.0
+
+==========================================================================================
+D. MMSE_FINAL_SCORE == -1 rows -- likely a sentinel, not a true score
+==========================================================================================
+2 rows with MMSE == -1
+     PHASE        PTID   RID VISCODE     GROUP  MMSE_FINAL_SCORE
+722  ADNI1  141_S_1024  1024     m24  Dementia              -1.0
+724  ADNI1  002_S_1070  1070     m36  Dementia              -1.0
+
+MMSE missingness by group:
+GROUP
+Control     186/343 missing (54.2%)
+Dementia     42/231 missing (18.2%)
+MCI         127/315 missing (40.3%)
+Name: MMSE_FINAL_SCORE, dtype: str
+
+==========================================================================================
+E. Is DIAGNOSIS in Final_Biomarker_Patients contemporaneous with the exact biomarker-draw visit?
+==========================================================================================
+Rows in Final_Biomarker_Patients whose (RID,VISCODE,DIAGNOSIS) triple exists verbatim in the raw visit-level diagnosis records: 889 / 889
+Rows NOT found verbatim (potential mismatch / relabeled / VISCODE naming diff): 0
+
+==========================================================================================
+E2. For patients whose diagnosis changes across visits, which visit did Unique_Patients_All select?
+==========================================================================================
+Number of patients with diagnosis change across visits (in raw diagnosis sheets): 747
+Of those, how many ended up in the final 889-patient modeling table: 209
+is_last_visit     1.0
+is_first_visit    0.0
+dtype: float64
+n_distinct_diagnoses among diagnosis-changers in final set:
+n_distinct_diagnoses
+2    197
+3     12
+Name: count, dtype: int64
+
+==========================================================================================
+F. Does the biomarker draw EXAMDATE match the diagnosis-visit EXAMDATE exactly (same-day) for all 889?
+==========================================================================================
+EXAMDATE matches between final table and raw diagnosis visit record: 889 / 889
+Missing diag-side date (no matching RID+VISCODE found at all): 0
+
+==========================================================================================
+G. ADNIGO phase - only 3 patients. Check their diagnosis distribution (rare category risk)
+==========================================================================================
+      PHASE        PTID     GROUP  DIAGNOSIS
+667  ADNIGO  007_S_0128  Dementia          3
+709  ADNIGO  116_S_0834  Dementia          3
+734  ADNIGO  011_S_1282  Dementia          3
+
+==========================================================================================
+H. VISCODE granularity -- can we derive a numeric 'months since baseline' feature? Check pattern
+==========================================================================================
+0
+m12    149
+m24     71
+y1      26
+y2      15
+m36     14
+y4       9
+m48      6
+m18      3
+m06      2
+m60      1
+Name: count, dtype: int64
+
+DONE.

@@ -1,0 +1,101 @@
+{
+  "model_name": "random_forest",
+  "role": "BINARY (Control vs Dementia) model \u2014 MCI excluded from this framing entirely",
+  "calibration_method": "sigmoid",
+  "feature_set": "core_plus_engineered",
+  "features": [
+    "pT217_F",
+    "AB42_F",
+    "AB40_F",
+    "AB42_AB40_F",
+    "pT217_AB42_F",
+    "NfL_harmonized",
+    "GFAP_harmonized",
+    "GFAP_NfL_ratio",
+    "AB40_minus_AB42",
+    "pT217_GFAP_product",
+    "log_pT217_F",
+    "log_AB40_F",
+    "log_NfL_harmonized",
+    "log_GFAP_harmonized",
+    "rank_pT217_F",
+    "rank_AB42_F",
+    "rank_AB40_F",
+    "rank_NfL_harmonized",
+    "rank_GFAP_harmonized"
+  ],
+  "class_order": [
+    1,
+    3
+  ],
+  "class_names": [
+    "Control",
+    "Dementia"
+  ],
+  "hyperparameters": {
+    "n_estimators": 300,
+    "max_depth": 5,
+    "min_samples_split": 20,
+    "min_samples_leaf": 7,
+    "max_features": "log2",
+    "class_weight": "balanced_subsample"
+  },
+  "imputation_strategy": "median",
+  "scaling_strategy": "robust",
+  "random_seed": 42,
+  "n_dev": 487,
+  "n_test": 87,
+  "test_metrics": {
+    "accuracy": 0.8735632183908046,
+    "balanced_accuracy": 0.8708791208791209,
+    "macro_f1": 0.8691371530151785,
+    "weighted_f1": 0.8738398474767813,
+    "mcc": 0.7385191073229318,
+    "cohen_kappa": 0.7383100902378998,
+    "precision_Control": 0.9019607843137255,
+    "recall_Control": 0.8846153846153846,
+    "f1_Control": 0.8932038834951457,
+    "precision_Dementia": 0.8333333333333334,
+    "recall_Dementia": 0.8571428571428571,
+    "f1_Dementia": 0.8450704225352113,
+    "confusion_matrix": [
+      [
+        46,
+        6
+      ],
+      [
+        5,
+        30
+      ]
+    ],
+    "roc_auc_ovr_macro": 0.956043956043956,
+    "roc_auc_ovr_weighted": 0.9560439560439561,
+    "roc_auc_Control_vs_rest": 0.956043956043956,
+    "roc_auc_Dementia_vs_rest": 0.9560439560439561,
+    "brier_score_mean": 0.08794408211135281,
+    "brier_Control": 0.08794408211135281,
+    "brier_Dementia": 0.08794408211135281
+  },
+  "bootstrap_ci_95": {
+    "accuracy": [
+      0.8723218390804598,
+      0.8045977011494253,
+      0.9425287356321839
+    ],
+    "macro_f1": [
+      0.8663686933269844,
+      0.7893251605116012,
+      0.93353705118411
+    ],
+    "balanced_accuracy": [
+      0.8692056907005674,
+      0.7904322991822993,
+      0.938301282051282
+    ],
+    "recall_Dementia": [
+      0.8535419458343462,
+      0.71875,
+      0.967741935483871
+    ]
+  }
+}

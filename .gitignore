@@ -1,0 +1,38 @@
+# --- Patient data (potentially sensitive) ---
+data/
+
+# --- Trained model binaries (large files) ---
+artifacts/models/*.joblib
+
+# --- Generated outputs (reproducible from code) ---
+artifacts/eda/
+artifacts/plots/
+reports/figures/
+
+# --- Large binary report files ---
+reports/*.docx
+reports/*.pdf
+
+# --- Report build scripts (not source code) ---
+report_build/
+
+# --- Python cache ---
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# --- Virtual environments ---
+venv/
+.venv/
+env/
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- OS ---
+.DS_Store
+Thumbs.db

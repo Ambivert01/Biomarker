@@ -2,7 +2,7 @@
 data/
 
 # --- Trained model binaries (large files) ---
-artifacts/models/*.joblib
+# artifacts/models/*.joblib  <-- kept: needed for Render deployment
 
 # --- Generated outputs (reproducible from code) ---
 artifacts/eda/

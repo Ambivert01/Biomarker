@@ -11,10 +11,146 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 from api.inference import ADNIInferencePipeline, InputValidationError, THRESHOLD_MODES
 
+# ---------------------------------------------------------------------------
+# Reference statistics computed from ADNI dataset (Control=343, Dementia=231)
+# Negatives treated as missing (sentinel values). p10/p90 = typical range.
+# ---------------------------------------------------------------------------
+BIOMARKER_STATS = {
+    "pT217_F": {
+        "label": "pTau-217", "unit": "pg/mL",
+        "Control":  {"mean": 0.180, "p10": 0.071, "p90": 0.345},
+        "Dementia": {"mean": 0.765, "p10": 0.185, "p90": 1.392},
+    },
+    "AB42_F": {
+        "label": "Amyloid-β42", "unit": "pg/mL",
+        "Control":  {"mean": 27.994, "p10": 21.158, "p90": 35.202},
+        "Dementia": {"mean": 26.546, "p10": 20.144, "p90": 34.998},
+    },
+    "AB40_F": {
+        "label": "Amyloid-β40", "unit": "pg/mL",
+        "Control":  {"mean": 324.834, "p10": 247.842, "p90": 401.112},
+        "Dementia": {"mean": 335.632, "p10": 254.795, "p90": 428.793},
+    },
+    "NfL_F": {
+        "label": "NfL", "unit": "pg/mL",
+        "Control":  {"mean": 22.296, "p10": 11.537, "p90": 34.468},
+        "Dementia": {"mean": 37.081, "p10": 20.244, "p90": 63.492},
+    },
+    "GFAP_F": {
+        "label": "GFAP", "unit": "pg/mL",
+        "Control":  {"mean": 59.656, "p10": 30.710, "p90": 98.430},
+        "Dementia": {"mean": 118.237, "p10": 56.180, "p90": 210.760},
+    },
+}
+
+COLOR_CTRL = "#2E7D32"
+COLOR_DEM  = "#C62828"
+COLOR_PT   = "#FF6F00"  # patient marker
+
+
+@st.cache_data
+def load_reference_data():
+    """Load ADNI binary subset (Control + Dementia) for scatter plots."""
+    data_path = Path(__file__).resolve().parent.parent.parent / "data" / "Final_Biomarker_Patients.parquet"
+    df = pd.read_parquet(data_path)
+    df = df[df["DIAGNOSIS"].isin([1, 3])].copy()
+    for c in BIOMARKER_STATS:
+        if c in df.columns:
+            df[c] = df[c].where(df[c] >= 0, other=float("nan"))
+    df["Group"] = df["DIAGNOSIS"].map({1: "Control", 3: "Dementia"})
+    return df
+
+
+def plot_dataset_ranges(ref_df: pd.DataFrame):
+    """Bar chart: Control vs Dementia mean + p10-p90 range for all 5 biomarkers."""
+    keys = list(BIOMARKER_STATS.keys())
+    fig, axes = plt.subplots(1, len(keys), figsize=(3.5 * len(keys), 4))
+    for ax, key in zip(axes, keys):
+        s = BIOMARKER_STATS[key]
+        ctrl, dem = s["Control"], s["Dementia"]
+        ax.bar([0], [ctrl["mean"]], color=COLOR_CTRL, alpha=0.85, width=0.4)
+        ax.bar([1], [dem["mean"]],  color=COLOR_DEM,  alpha=0.85, width=0.4)
+        ax.vlines(0, ctrl["p10"], ctrl["p90"], color=COLOR_CTRL, linewidth=4, alpha=0.5)
+        ax.vlines(1, dem["p10"],  dem["p90"],  color=COLOR_DEM,  linewidth=4, alpha=0.5)
+        ax.set_xticks([0, 1])
+        ax.set_xticklabels(["Control", "Dementia"], fontsize=9)
+        ax.set_title(f"{s['label']}\n({s['unit']})", fontsize=9)
+    fig.suptitle("Dataset: Biomarker Mean ± Typical Range (p10–p90) by Group", fontsize=11)
+    fig.tight_layout()
+    return fig
+
+
+def plot_dataset_pairwise(ref_df: pd.DataFrame):
+    """
+    For each pair (key_x vs key_y) — 2 bars:
+      Dementia bar = mean(key_x, Dementia) / mean(key_y, Dementia)
+      Control bar  = mean(key_x, Control)  / mean(key_y, Control)
+    Laid out 2 subplots per row for readability.
+    """
+    keys = list(BIOMARKER_STATS.keys())
+    figs = []
+    for key_x in keys:
+        others = [k for k in keys if k != key_x]
+        ncols = 2
+        nrows = (len(others) + 1) // ncols
+        fig, axes = plt.subplots(nrows, ncols,
+                                  figsize=(9, 4.5 * nrows),
+                                  facecolor="#1a1a2e")
+        axes = np.array(axes).flatten()
+
+        for idx, key_y in enumerate(others):
+            ax = axes[idx]
+            lx = BIOMARKER_STATS[key_x]["label"]
+            ly = BIOMARKER_STATS[key_y]["label"]
+
+            dem_ratio  = BIOMARKER_STATS[key_x]["Dementia"]["mean"] / BIOMARKER_STATS[key_y]["Dementia"]["mean"]
+            ctrl_ratio = BIOMARKER_STATS[key_x]["Control"]["mean"]  / BIOMARKER_STATS[key_y]["Control"]["mean"]
+
+            ax.set_facecolor("#16213e")
+            bars = ax.bar(
+                ["Dementia", "Control"],
+                [dem_ratio, ctrl_ratio],
+                color=["#e63946", "#2a9d8f"],
+                width=0.45, edgecolor="white", linewidth=0.6
+            )
+            # value label inside bar near top — avoids overflow
+            for bar in bars:
+                h = bar.get_height()
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    h * 0.92,
+                    f"{h:.3g}",
+                    ha="center", va="top",
+                    fontsize=9, color="white", fontweight="bold"
+                )
+
+            ax.set_title(f"{lx}  ÷  {ly}", fontsize=10, color="white", pad=8)
+            ax.set_ylabel("Ratio", fontsize=8, color="#aaaaaa")
+            ax.tick_params(colors="white", labelsize=9)
+            for spine in ax.spines.values():
+                spine.set_edgecolor("#444466")
+            ax.yaxis.label.set_color("#aaaaaa")
+            # add 10% top padding so label never clips
+            ax.set_ylim(0, max(dem_ratio, ctrl_ratio) * 1.18)
+
+        # hide unused subplot if odd number
+        for idx in range(len(others), len(axes)):
+            axes[idx].set_visible(False)
+
+        fig.suptitle(
+            f"{BIOMARKER_STATS[key_x]['label']}  —  Dementia vs Control ratio with each biomarker",
+            fontsize=12, color="white", y=1.01
+        )
+        fig.tight_layout(pad=2.0)
+        figs.append((BIOMARKER_STATS[key_x]["label"], fig))
+    return figs
+
 st.set_page_config(page_title="ADNI Plasma Biomarker AD Classifier", layout="wide", page_icon="🧠")
+st.markdown("<style> h1 a, h2 a, h3 a, h4 a { display: none !important; } </style>", unsafe_allow_html=True)
 
 
 @st.cache_resource
@@ -44,49 +180,46 @@ st.sidebar.caption(
 
 try:
     pipeline = load_pipeline(mode)
+    ref_df   = load_reference_data()
 except Exception as e:
     st.error(f"Could not load the model artifacts: {e}\n\nRun notebooks/09_finalize_biomarker_only.py and "
              f"notebooks/12_finalize_binary.py first.")
     st.stop()
 
-tab_predict, tab_model_card = st.tabs(["🔬 Predict", "📋 Model Card"])
+tab_predict, tab_model_card, tab_dataset = st.tabs(["🔬 Predict", "📋 Model Card", "📈 Dataset Analysis"])
 
 with tab_predict:
     st.subheader("Patient Plasma Biomarker Panel")
     st.caption("Leave a field blank if that assay wasn't run — the pipeline harmonizes across "
                "Fujirebio/Quanterix platforms and tolerates a partial panel.")
 
-    col1, col2, col3 = st.columns(3)
+    # Row 1 — Fujirebio (left) + Neuro (right)
+    col1, col2 = st.columns(2)
     with col1:
-        st.markdown("**Fujirebio panel**")
+        st.markdown("### 🧪 Fujirebio Panel")
         pt217 = st.number_input("pTau-217 (pT217_F)", min_value=0.0, value=None, placeholder="e.g. 0.45", format="%.4f")
-        ab42 = st.number_input("Amyloid-β42 (AB42_F)", min_value=0.0, value=None, placeholder="e.g. 27.0", format="%.3f")
-        ab40 = st.number_input("Amyloid-β40 (AB40_F)", min_value=0.0, value=None, placeholder="e.g. 340.0", format="%.3f")
+        ab42  = st.number_input("Amyloid-β42 (AB42_F)", min_value=0.0, value=None, placeholder="e.g. 27.0", format="%.3f")
+        ab40  = st.number_input("Amyloid-β40 (AB40_F)", min_value=0.0, value=None, placeholder="e.g. 340.0", format="%.3f")
     with col2:
-        st.markdown("**Derived ratios** *(auto-computed if left blank and both inputs above are given)*")
-        ab_ratio = st.number_input("AB42/AB40 ratio", min_value=0.0, value=None, placeholder="auto", format="%.5f")
-        pt_ratio = st.number_input("pTau217/AB42 ratio", min_value=0.0, value=None, placeholder="auto", format="%.5f")
-    with col3:
-        st.markdown("**Neurodegeneration / neuroinflammation**")
-        nfl_f = st.number_input("NfL — Fujirebio (NfL_F)", min_value=0.0, value=None, placeholder="optional")
-        gfap_f = st.number_input("GFAP — Fujirebio (GFAP_F)", min_value=0.0, value=None, placeholder="optional")
-        nfl_q = st.number_input("NfL — Quanterix (NfL_Q)", min_value=0.0, value=None, placeholder="optional")
-        gfap_q = st.number_input("GFAP — Quanterix (GFAP_Q)", min_value=0.0, value=None, placeholder="optional")
+        st.markdown("### 🧠 Neurodegeneration / Neuroinflammation")
+        nfl_val  = st.number_input("NfL",  min_value=0.0, value=None, placeholder="optional")
+        gfap_val = st.number_input("GFAP", min_value=0.0, value=None, placeholder="optional")
 
-    st.subheader("Decision Sensitivity")
-    mode_label = st.radio(
-        "Operating point",
-        options=["balanced", "high_sensitivity", "standard_argmax"],
-        format_func=lambda m: {
-            "balanced": "Balanced (recommended default)",
-            "high_sensitivity": "High-sensitivity screening (maximizes Dementia recall, more false alarms)",
-            "standard_argmax": "Standard argmax (no clinical re-weighting)",
-        }[m],
-        horizontal=True,
-    )
-    explain = st.checkbox("Show SHAP explanation for this prediction", value=True)
+    # Pass same value to both platform columns — harmonizer picks whichever is available
+    nfl_f = nfl_q = nfl_val
+    gfap_f = gfap_q = gfap_val
+
+    # Row 2 — Derived ratios below, full width 2 columns
+    st.markdown("### 📐 Derived Ratios *(auto-computed if left blank)*")
+    col_r1, col_r2 = st.columns(2)
+    with col_r1:
+        ab_ratio = st.number_input("AB42/AB40 ratio",   min_value=0.0, value=None, placeholder="auto", format="%.5f")
+    with col_r2:
+        pt_ratio = st.number_input("pTau217/AB42 ratio", min_value=0.0, value=None, placeholder="auto", format="%.5f")
 
     if st.button("Run prediction", type="primary"):
+        mode_label = "balanced"
+        explain = True
         record = {
             "pT217_F": pt217, "AB42_F": ab42, "AB40_F": ab40,
             "AB42_AB40_F": ab_ratio if ab_ratio is not None else (ab42 / ab40 if (ab42 and ab40) else None),
@@ -133,8 +266,7 @@ with tab_predict:
                 ax2.invert_yaxis()
                 st.pyplot(fig2)
 
-            st.subheader("Structured response (JSON)")
-            st.code(result.to_json(), language="json")
+
 
 with tab_model_card:
     st.header("Model Card")
@@ -188,3 +320,39 @@ if you need an MCI-aware prediction instead, at the cost of much lower accuracy 
   estimates as approximate.
 - Not a substitute for clinical judgment, CSF/PET biomarkers, or a full neuropsychological work-up.
 """)
+
+with tab_dataset:
+    st.header("Dataset Biomarker Analysis")
+    st.caption(
+        "ADNI dataset: 343 Control + 231 Dementia patients (binary subset). "
+        "Negative sentinel values excluded. All values in pg/mL."
+    )
+
+    # --- Summary stats table ---
+    st.markdown("#### 📊 Reference Ranges: Control vs Dementia")
+    rows = []
+    for k, s in BIOMARKER_STATS.items():
+        rows.append({
+            "Biomarker": s["label"],
+            "Unit": s["unit"],
+            "Control Mean": f"{s['Control']['mean']:.3g}",
+            "Control p10–p90": f"{s['Control']['p10']:.3g} – {s['Control']['p90']:.3g}",
+            "Dementia Mean": f"{s['Dementia']['mean']:.3g}",
+            "Dementia p10–p90": f"{s['Dementia']['p10']:.3g} – {s['Dementia']['p90']:.3g}",
+        })
+    st.table(pd.DataFrame(rows))
+
+    # --- Range bar chart ---
+    st.markdown("#### Group Mean ± Typical Range")
+    st.caption("Bars = group mean. Vertical lines = 10th–90th percentile range.")
+    fig_r = plot_dataset_ranges(ref_df)
+    st.pyplot(fig_r)
+    plt.close(fig_r)
+
+    # --- Pairwise scatter plots ---
+    st.markdown("#### 🔬 Pairwise Biomarker Comparisons (full dataset)")
+    st.caption("Green = Control, Red = Dementia. Each row: one biomarker vs all others.")
+    for title, fig_p in plot_dataset_pairwise(ref_df):
+        with st.expander(f"{title} vs all", expanded=False):
+            st.pyplot(fig_p)
+            plt.close(fig_p)

@@ -1,11 +1,9 @@
-# Plasma Biomarker Alzheimer's Disease Diagnostic Classification System
+# Plasma Biomarker Alzheimer's Disease Diagnostic Classifier
 
-Production ML system that classifies patients from ADNI plasma biomarker concentrations.
-**Recommended model: Control vs. Dementia, 87.4% test accuracy.** A research-reference 3-class
-model (Control/MCI/Dementia, 61.2% accuracy) is also included — see below for why both exist.
-Built end-to-end: data audit → leakage-safe pipeline → 9-model Optuna benchmark (run twice, once
-per model) → calibration → clinical decision thresholds → SHAP explainability → error analysis →
-tested inference API → Streamlit app.
+A production ML system that classifies patients as **Control** or **Dementia** from plasma
+biomarker concentrations, built on the ADNI dataset. Recommended model achieves **87.4% test
+accuracy** (95% CI: 80.5%–94.3%). A research-reference 3-class model (Control/MCI/Dementia,
+61.2% accuracy) is also included.
 
 ## Two models, deliberately
 
@@ -14,106 +12,142 @@ tested inference API → Streamlit app.
 | Predicts | Control vs. Dementia only | Control vs. MCI vs. Dementia |
 | Model | Random Forest | Extra Trees |
 | Test accuracy | **87.4%** (95% CI: 80.5%–94.3%) | 61.2% |
-| Why two models | The 3-class task could not reliably clear 80% accuracy using plasma biomarkers alone — this matches published research, where 3-way AD classification is a well-documented hard problem even with MRI/CSF/genetics added. Dropping MCI as a class gets a clean, reliable, clinically-usable accuracy above 80%, at the cost of no longer being able to flag MCI specifically. |
+| Test patients | 87 | 134 |
+| Why | The 3-class task could not reliably clear 80% accuracy using plasma biomarkers alone — consistent with published research where 3-way AD classification is a well-documented hard problem. Dropping MCI gives a clean, clinically-usable result above 80%. |
 
-Both are wired into `src/api/inference.py` and the Streamlit app — switch with `mode="binary"` or
-`mode="three_class"`. **Every prediction's output includes the model's own validated accuracy
-(point estimate + 95% confidence interval)**, so you always see how trustworthy that number is
-alongside the diagnosis itself.
+Both models are available in the app — switch via the sidebar.
 
-## Quickstart (one command)
+## Quickstart
 
-1. Install Python 3.10+ if you don't already have it: https://python.org
-2. Unzip this project, open a terminal in this folder, and run:
-   ```
-   python start.py
-   ```
-   (Windows users can instead just double-click `start.bat`; Mac/Linux users can double-click `start.sh`.)
-3. This installs everything needed and opens the app in your browser at `http://localhost:8501`.
-4. Fill in a patient's biomarker values in the form and click **Run prediction**.
+```bash
+python start.py
+```
 
-No other setup required — `start.py` handles installing dependencies for you.
+Opens the app at `http://localhost:8501`. Windows users can double-click `start.bat`,
+Mac/Linux users `start.sh`. No other setup needed — `start.py` installs all dependencies.
 
-**Start here:** `reports/ADNI_AD_Classifier_Report.docx` (or `.pdf`) — the full write-up of everything
-below, with figures and results tables. Note: the report as written covers the original 3-class
-development in depth; the binary Control-vs-Dementia model was added afterward specifically to meet
-a hard 80%+ accuracy requirement — see `reports/BINARY_MODEL_ADDENDUM.md` for that part of the story.
+## App — three tabs
+
+### 🔬 Predict
+Enter a patient's plasma biomarker values and click **Run prediction**. The pipeline:
+- Validates and cleans inputs (negative sentinels → NaN, missing fields imputed)
+- Harmonizes NfL/GFAP across Fujirebio and Quanterix assay platforms
+- Engineers 19 features (7 core biomarkers + ratios, log transforms, percentile ranks)
+- Returns diagnosis, confidence, class probabilities, and SHAP feature contributions
+
+Every prediction output includes the model's validated accuracy + 95% CI so you always
+see how trustworthy the number is alongside the diagnosis.
+
+### 📋 Model Card
+Validated test-set metrics (accuracy, balanced accuracy, Dementia recall/precision),
+decision threshold operating points, known limitations, and scope caveats.
+
+### 📈 Dataset Analysis
+Dataset-level biomarker analysis — independent of any patient input:
+- **Reference ranges table** — Control vs. Dementia mean and p10–p90 typical range for all 5 biomarkers
+- **Group mean ± range chart** — visual comparison of distributions
+- **Pairwise ratio comparisons** — for every biomarker pair (e.g. pTau-217 ÷ NfL), two bars showing the Dementia ratio vs. the Control ratio, across all factor combinations
+
+## Biomarkers used
+
+| Biomarker | Platform | Role |
+|---|---|---|
+| pTau-217 | Fujirebio | Strongest single predictor (SHAP) |
+| Amyloid-β42 | Fujirebio | Amyloid burden |
+| Amyloid-β40 | Fujirebio | Amyloid burden (denominator) |
+| AB42/AB40 ratio | Derived | Amyloid deposition proxy |
+| pTau217/AB42 ratio | Derived | Tau-amyloid interaction |
+| NfL | Fujirebio + Quanterix (harmonized) | Neurodegeneration / axonal injury |
+| GFAP | Fujirebio + Quanterix (harmonized) | Neuroinflammation / astrogliosis |
+
+NfL and GFAP are harmonized across platforms using empirically derived fixed ratios
+(NfL: 1.465×, GFAP: 0.376×) computed from 138 dual-platform patients in the audit.
+
+## Reference ranges (ADNI dataset, binary subset)
+
+| Biomarker | Control mean (p10–p90) | Dementia mean (p10–p90) |
+|---|---|---|
+| pTau-217 (pg/mL) | 0.180 (0.071–0.345) | 0.765 (0.185–1.392) |
+| Amyloid-β42 (pg/mL) | 27.99 (21.16–35.20) | 26.55 (20.14–35.00) |
+| Amyloid-β40 (pg/mL) | 324.8 (247.8–401.1) | 335.6 (254.8–428.8) |
+| NfL (pg/mL) | 22.30 (11.54–34.47) | 37.08 (20.24–63.49) |
+| GFAP (pg/mL) | 59.66 (30.71–98.43) | 118.2 (56.18–210.8) |
 
 ## Project layout
 
 ```
-config/config.yaml          Every tunable constant — nothing hardcoded in source
-data/                        Cached parquet versions of each Excel sheet + a cleaned EDA table
+config/config.yaml              Every tunable constant — nothing hardcoded in source
+data/                           Cached parquet versions of each Excel sheet
 src/
-  data_loader.py             Load + validate raw data (hard-fails on integrity violations)
-  preprocessing/              Sentinel handling, imputation/scaling factory, full pipeline assembly
-  features/                   Cross-platform harmonization, ratio/log/rank engineering, MMSE handling
-  models/model_zoo.py         All 9 benchmarked models + their Optuna search spaces (binary- and multiclass-safe)
-  evaluation/metrics.py       Full metric suite (accuracy → bootstrap CI) as one reusable function
-  api/inference.py            Production inference pipeline — mode="binary" or mode="three_class"
-  streamlit/app.py            Clinician-facing UI with a model switcher + Model Card tab
-notebooks/                   Numbered, sequential, reproducible analysis/training scripts (01–12)
-tests/                       54 pytest tests — leakage safety, serialization, edge cases, both models
+  data_loader.py                Load + validate raw data (hard-fails on integrity violations)
+  preprocessing/                Sentinel handling, imputation/scaling factory, full pipeline
+  features/                     Cross-platform harmonization, ratio/log/rank engineering
+  models/model_zoo.py           All 9 benchmarked models + Optuna search spaces
+  evaluation/metrics.py         Full metric suite (accuracy → bootstrap CI)
+  api/inference.py              Production inference — mode="binary" or mode="three_class"
+  streamlit/app.py              Clinician UI: Predict / Model Card / Dataset Analysis tabs
+notebooks/                      Numbered sequential scripts (01–12): audit → train → evaluate
+tests/                          54 pytest tests — leakage safety, serialization, edge cases
 artifacts/
-  models/                     final_model_binary.* (recommended) and final_model_biomarker_only.* (3-class reference), + metadata.json for each
-  optuna_studies_binary/, optuna_studies_biomarker_only/, optuna_studies/   Every model's tuned hyperparameters, per experiment
+  models/                       final_model_binary.* + final_model_biomarker_only.* + metadata
+  optuna_studies_binary/        Tuned hyperparameters for all 9 models (binary task)
+  optuna_studies_biomarker_only/ Tuned hyperparameters (3-class task)
 reports/
-  ADNI_AD_Classifier_Report.docx / .pdf   Full report on the original 3-class development
-  BINARY_MODEL_ADDENDUM.md                Why + how the binary model was added, and its results
-  DATA_AUDIT_REPORT.md                    Standalone data-audit writeup
-  figures/                                All generated plots (EDA, evaluation, SHAP, thresholds, binary model)
-  *.csv                                    Every intermediate results table (bake-offs, ablations, etc.)
+  ADNI_AD_Classifier_Report.docx/.pdf   Full report on 3-class development
+  BINARY_MODEL_ADDENDUM.md              Binary model rationale + results
+  DATA_AUDIT_REPORT.md                  Standalone data audit
+  figures/                              All generated plots
 ```
 
-## Reproducing / running things
+## Reproducing results
 
 ```bash
-# Easiest: one command does setup + launches the app
+# Full setup + launch app
 python start.py
 
-# Or step by step:
+# Step by step
 pip install -r requirements.txt
 
-# Run the full test suite
+# Run test suite
 cd tests && python3 -m pytest -v
 
-# Make a prediction from Python directly
+# Run prediction from Python
 cd src/api && python3 inference.py
 
-# Launch the clinician UI manually
+# Launch app manually
 cd src/streamlit && streamlit run app.py
 
-# Re-run any step of the development process (in order)
-cd notebooks && python3 01_data_audit.py   # ... through 10_shap_explainability.py
-# Binary model bake-off (run per-model, resumable — see file for why):
-python3 run_one_model_binary.py random_forest 40 100   # repeat for each of the 9 model names
+# Re-run development pipeline (in order)
+cd notebooks
+python3 01_data_audit.py          # through 10_shap_explainability.py
+python3 run_one_model_binary.py random_forest 40 100   # repeat for each of 9 models
 python3 12_finalize_binary.py
 ```
 
-## Using a specific model from Python
+## Python API
 
 ```python
 from api.inference import ADNIInferencePipeline
 
-# Recommended: binary, 87.4% test accuracy
+# Binary model — recommended
 pipe = ADNIInferencePipeline(mode="binary")
 result = pipe.predict_one({
     "pT217_F": 0.85, "AB42_F": 26.5, "AB40_F": 355.0,
     "AB42_AB40_F": 0.075, "pT217_AB42_F": 0.032,
     "NfL_F": 45.0, "GFAP_F": 110.0, "NfL_Q": None, "GFAP_Q": None,
 })
-print(result.diagnosis)          # "Control" or "Dementia"
-print(result.model_accuracy)     # {'point_estimate': 0.8736, 'ci_95_low': 0.8046, ...}
+print(result.diagnosis)       # "Control" or "Dementia"
+print(result.confidence)      # e.g. 0.89
+print(result.model_accuracy)  # {'point_estimate': 0.8736, 'ci_95_low': 0.8046, ...}
 ```
 
-## Key limitations (see report §11 and BINARY_MODEL_ADDENDUM.md for full discussion)
+## Key limitations
 
-- **The binary model cannot say "MCI"** — it was trained only on Control and Dementia patients.
-  Use `mode="three_class"` if you need MCI flagged, at the cost of much lower accuracy (~61%).
-- **Concurrent diagnosis, not prognosis** — biomarkers and diagnosis are drawn at the same visit.
-- **Modest test sets** (87 patients for binary, 134 for 3-class) — confidence intervals are wide;
-  every prediction's output includes that interval so you can see the uncertainty directly.
+- **Binary model cannot say "MCI"** — MCI patients are forced into Control or Dementia.
+  Use `mode="three_class"` if MCI flagging is needed (61.2% accuracy).
+- **Concurrent diagnosis, not prognosis** — biomarkers and diagnosis are from the same visit.
+- **Modest test sets** — 87 patients (binary), 134 (3-class). CIs are wide; every prediction
+  output includes the interval so uncertainty is always visible.
 - **No external validation cohort** — generalization beyond ADNI is unverified.
-
-Not a certified diagnostic device; positioned as a triage / decision-support tool alongside
-clinical judgment.
+- **Not a certified diagnostic device** — positioned as a triage/decision-support tool
+  alongside clinical judgment.

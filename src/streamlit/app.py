@@ -65,89 +65,89 @@ def load_reference_data():
     return df
 
 
-def plot_dataset_ranges(ref_df: pd.DataFrame):
-    """Bar chart: Control vs Dementia mean + p10-p90 range for all 5 biomarkers."""
-    keys = list(BIOMARKER_STATS.keys())
-    fig, axes = plt.subplots(1, len(keys), figsize=(3.5 * len(keys), 4))
-    for ax, key in zip(axes, keys):
-        s = BIOMARKER_STATS[key]
-        ctrl, dem = s["Control"], s["Dementia"]
-        ax.bar([0], [ctrl["mean"]], color=COLOR_CTRL, alpha=0.85, width=0.4)
-        ax.bar([1], [dem["mean"]],  color=COLOR_DEM,  alpha=0.85, width=0.4)
-        ax.vlines(0, ctrl["p10"], ctrl["p90"], color=COLOR_CTRL, linewidth=4, alpha=0.5)
-        ax.vlines(1, dem["p10"],  dem["p90"],  color=COLOR_DEM,  linewidth=4, alpha=0.5)
-        ax.set_xticks([0, 1])
-        ax.set_xticklabels(["Control", "Dementia"], fontsize=9)
-        ax.set_title(f"{s['label']}\n({s['unit']})", fontsize=9)
-    fig.suptitle("Dataset: Biomarker Mean ± Typical Range (p10–p90) by Group", fontsize=11)
-    fig.tight_layout()
+def plot_single_range(key: str):
+    """Individual bar chart for one biomarker — same style as plot_single_pair."""
+    s    = BIOMARKER_STATS[key]
+    ctrl = s["Control"]
+    dem  = s["Dementia"]
+
+    fig, ax = plt.subplots(figsize=(4.8, 3.8), facecolor="#1a1a2e")
+    ax.set_facecolor("#16213e")
+
+    b1 = ax.bar(0, ctrl["mean"], width=0.5, color="#2a9d8f",
+                edgecolor="white", linewidth=0.6, zorder=3)
+    b2 = ax.bar(1, dem["mean"],  width=0.5, color="#e63946",
+                edgecolor="white", linewidth=0.6, zorder=3)
+
+    # p10-p90 range — offset right to avoid overlap
+    for xpos, grp, color in [(0, ctrl, "#2a9d8f"), (1, dem, "#e63946")]:
+        rx = xpos + 0.33
+        ax.vlines(rx, grp["p10"], grp["p90"], color=color, linewidth=2.5, alpha=0.75, zorder=4)
+        ax.hlines([grp["p10"], grp["p90"]], rx - 0.08, rx + 0.08,
+                  color=color, linewidth=1.8, alpha=0.9, zorder=4)
+        ax.text(rx + 0.1, grp["p90"], f"{grp['p90']:.3g}",
+                va="center", ha="left", fontsize=6.5, color=color)
+        ax.text(rx + 0.1, grp["p10"], f"{grp['p10']:.3g}",
+                va="center", ha="left", fontsize=6.5, color=color)
+
+    # mean labels inside bars
+    for bar, val in [(b1[0], ctrl["mean"]), (b2[0], dem["mean"])]:
+        ax.text(bar.get_x() + bar.get_width() / 2, val * 0.88,
+                f"{val:.3g}", ha="center", va="top",
+                fontsize=8, color="white", fontweight="bold", zorder=5)
+
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(["Control", "Dementia"], fontsize=9, color="white")
+    ax.set_title(f"{s['label']}", fontsize=10, color="white", fontweight="bold", pad=6)
+    ax.set_ylabel(s["unit"], fontsize=7, color="#aaaaaa")
+    ax.tick_params(colors="white", labelsize=8)
+    ax.set_xlim(-0.6, 2.0)
+    ax.set_ylim(0, max(ctrl["p90"], dem["p90"]) * 1.15)
+    for spine in ax.spines.values():
+        spine.set_edgecolor("#444466")
+    ax.grid(axis="y", color="#ffffff18", linewidth=0.5, zorder=0)
+    fig.tight_layout(pad=1.0)
+    return fig
+
+
+def plot_single_pair(key_x: str, key_y: str):
+    """Single bar chart for one biomarker pair — Dementia vs Control ratio."""
+    lx = BIOMARKER_STATS[key_x]["label"]
+    ly = BIOMARKER_STATS[key_y]["label"]
+    dem_ratio  = BIOMARKER_STATS[key_x]["Dementia"]["mean"] / BIOMARKER_STATS[key_y]["Dementia"]["mean"]
+    ctrl_ratio = BIOMARKER_STATS[key_x]["Control"]["mean"]  / BIOMARKER_STATS[key_y]["Control"]["mean"]
+
+    fig, ax = plt.subplots(figsize=(4.0, 3.2), facecolor="#1a1a2e")
+    ax.set_facecolor("#16213e")
+    bars = ax.bar(
+        ["Dementia", "Control"], [dem_ratio, ctrl_ratio],
+        color=["#e63946", "#2a9d8f"], width=0.45,
+        edgecolor="white", linewidth=0.6
+    )
+    for bar in bars:
+        h = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width() / 2, h * 0.90,
+                f"{h:.3g}", ha="center", va="top",
+                fontsize=8, color="white", fontweight="bold")
+    ax.set_ylim(0, max(dem_ratio, ctrl_ratio) * 1.18)
+    ax.set_title(f"{lx}  ÷  {ly}", fontsize=9, color="white", pad=6)
+    ax.set_ylabel("Ratio", fontsize=7, color="#aaaaaa")
+    ax.tick_params(colors="white", labelsize=8)
+    for spine in ax.spines.values():
+        spine.set_edgecolor("#444466")
+    ax.grid(axis="y", color="#ffffff18", linewidth=0.5)
+    fig.tight_layout(pad=1.0)
     return fig
 
 
 def plot_dataset_pairwise(ref_df: pd.DataFrame):
-    """
-    For each pair (key_x vs key_y) — 2 bars:
-      Dementia bar = mean(key_x, Dementia) / mean(key_y, Dementia)
-      Control bar  = mean(key_x, Control)  / mean(key_y, Control)
-    Laid out 2 subplots per row for readability.
-    """
+    """Returns list of (title, [(key_x, key_y), ...]) — rendered as st.columns grids."""
     keys = list(BIOMARKER_STATS.keys())
-    figs = []
+    groups = []
     for key_x in keys:
         others = [k for k in keys if k != key_x]
-        ncols = 2
-        nrows = (len(others) + 1) // ncols
-        fig, axes = plt.subplots(nrows, ncols,
-                                  figsize=(9, 4.5 * nrows),
-                                  facecolor="#1a1a2e")
-        axes = np.array(axes).flatten()
-
-        for idx, key_y in enumerate(others):
-            ax = axes[idx]
-            lx = BIOMARKER_STATS[key_x]["label"]
-            ly = BIOMARKER_STATS[key_y]["label"]
-
-            dem_ratio  = BIOMARKER_STATS[key_x]["Dementia"]["mean"] / BIOMARKER_STATS[key_y]["Dementia"]["mean"]
-            ctrl_ratio = BIOMARKER_STATS[key_x]["Control"]["mean"]  / BIOMARKER_STATS[key_y]["Control"]["mean"]
-
-            ax.set_facecolor("#16213e")
-            bars = ax.bar(
-                ["Dementia", "Control"],
-                [dem_ratio, ctrl_ratio],
-                color=["#e63946", "#2a9d8f"],
-                width=0.45, edgecolor="white", linewidth=0.6
-            )
-            # value label inside bar near top — avoids overflow
-            for bar in bars:
-                h = bar.get_height()
-                ax.text(
-                    bar.get_x() + bar.get_width() / 2,
-                    h * 0.92,
-                    f"{h:.3g}",
-                    ha="center", va="top",
-                    fontsize=9, color="white", fontweight="bold"
-                )
-
-            ax.set_title(f"{lx}  ÷  {ly}", fontsize=10, color="white", pad=8)
-            ax.set_ylabel("Ratio", fontsize=8, color="#aaaaaa")
-            ax.tick_params(colors="white", labelsize=9)
-            for spine in ax.spines.values():
-                spine.set_edgecolor("#444466")
-            ax.yaxis.label.set_color("#aaaaaa")
-            # add 10% top padding so label never clips
-            ax.set_ylim(0, max(dem_ratio, ctrl_ratio) * 1.18)
-
-        # hide unused subplot if odd number
-        for idx in range(len(others), len(axes)):
-            axes[idx].set_visible(False)
-
-        fig.suptitle(
-            f"{BIOMARKER_STATS[key_x]['label']}  —  Dementia vs Control ratio with each biomarker",
-            fontsize=12, color="white", y=1.01
-        )
-        fig.tight_layout(pad=2.0)
-        figs.append((BIOMARKER_STATS[key_x]["label"], fig))
-    return figs
+        groups.append((BIOMARKER_STATS[key_x]["label"], key_x, others))
+    return groups
 
 st.set_page_config(page_title="ADNI Plasma Biomarker AD Classifier", layout="wide", page_icon="🧠")
 st.markdown("<style> h1 a, h2 a, h3 a, h4 a { display: none !important; } </style>", unsafe_allow_html=True)
@@ -344,15 +344,29 @@ with tab_dataset:
 
     # --- Range bar chart ---
     st.markdown("#### Group Mean ± Typical Range")
-    st.caption("Bars = group mean. Vertical lines = 10th–90th percentile range.")
-    fig_r = plot_dataset_ranges(ref_df)
-    st.pyplot(fig_r)
-    plt.close(fig_r)
+    st.caption("Bars = group mean. Lines = 10th–90th percentile range.")
+    keys = list(BIOMARKER_STATS.keys())
+    row1 = st.columns(3)
+    for col, key in zip(row1, keys[:3]):
+        fig_r = plot_single_range(key)
+        col.pyplot(fig_r, use_container_width=True)
+        plt.close(fig_r)
+    _, c1, c2, _ = st.columns([0.5, 1, 1, 0.5])
+    for col, key in zip([c1, c2], keys[3:]):
+        fig_r = plot_single_range(key)
+        col.pyplot(fig_r, use_container_width=True)
+        plt.close(fig_r)
 
     # --- Pairwise scatter plots ---
-    st.markdown("#### 🔬 Pairwise Biomarker Comparisons (full dataset)")
-    st.caption("Green = Control, Red = Dementia. Each row: one biomarker vs all others.")
-    for title, fig_p in plot_dataset_pairwise(ref_df):
+    st.markdown("#### 🔬 Pairwise Biomarker Comparisons")
+    st.caption("Each biomarker's ratio with every other — Dementia vs Control.")
+    for title, key_x, others in plot_dataset_pairwise(ref_df):
         with st.expander(f"{title} vs all", expanded=False):
-            st.pyplot(fig_p)
-            plt.close(fig_p)
+            pairs = [(key_x, ky) for ky in others]
+            for row_start in range(0, len(pairs), 4):
+                row_pairs = pairs[row_start:row_start + 4]
+                cols = st.columns(4)
+                for col, (kx, ky) in zip(cols, row_pairs):
+                    fig_p = plot_single_pair(kx, ky)
+                    col.pyplot(fig_p, use_container_width=True)
+                    plt.close(fig_p)

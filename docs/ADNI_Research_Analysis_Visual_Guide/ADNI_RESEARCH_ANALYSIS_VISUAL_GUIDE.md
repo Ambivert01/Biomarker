@@ -1129,7 +1129,7 @@ The analysis run generates **101 result files** in the current finalized project
 This visual guide should be read together with:
 
 - `README.md`
-- `DOCUMENTATION.md`
+- `docs/DOCUMENTATION.md`
 - `results/reports/ANALYSIS_REPORT.md`
 - `results/reports/analysis_summary.json`
 - `run_analysis.py`

@@ -319,9 +319,9 @@ artifacts/
   optuna_studies_biomarker_only/    Tuned hyperparameters (3-class task)
 reports/
   ADNI_AD_Classifier_Report.docx/.pdf   Full report on 3-class development
-  BINARY_MODEL_ADDENDUM.md              Binary model rationale + results
-  DATA_AUDIT_REPORT.md                  Standalone data audit
-  MODEL_SELECTION.md                    Bake-off rationale
+  docs/BINARY_MODEL_ADDENDUM.md         Binary model rationale + results
+  docs/DATA_AUDIT_REPORT.md             Standalone data audit
+  docs/MODEL_SELECTION.md               Bake-off rationale
   figures/                              All generated plots (28 figures)
 results/                            ← NEW: statistical analysis outputs
   statistics/                       Descriptive stats, Kruskal-Wallis, Mann-Whitney, MMSE
@@ -415,12 +415,12 @@ print(result.model_accuracy)  # {'point_estimate': 0.8736, 'ci_95_low': 0.8046, 
 | Document | What it covers |
 |---|---|
 | [`docs/INDEX.md`](docs/INDEX.md) | **Master index** — all documents, reports, outputs in one place |
-| [`DOCUMENTATION.md`](DOCUMENTATION.md) | Complete technical + clinical documentation |
+| [`docs/DOCUMENTATION.md`](docs/DOCUMENTATION.md) | Complete technical + clinical documentation |
 | [`results/reports/ANALYSIS_REPORT.md`](results/reports/ANALYSIS_REPORT.md) | Full statistical analysis (15 sections, 101 files) |
-| [`ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md`](ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md) | Figure-by-figure research interpretation (57 images) |
-| [`reports/BINARY_MODEL_ADDENDUM.md`](reports/BINARY_MODEL_ADDENDUM.md) | Binary model rationale + results |
-| [`reports/DATA_AUDIT_REPORT.md`](reports/DATA_AUDIT_REPORT.md) | Full data integrity audit |
-| [`reports/MODEL_SELECTION.md`](reports/MODEL_SELECTION.md) | 3-class bake-off rationale |
+| [`docs/ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md`](docs/ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md) | Figure-by-figure research interpretation (57 images) |
+| [`docs/BINARY_MODEL_ADDENDUM.md`](docs/BINARY_MODEL_ADDENDUM.md) | Binary model rationale + results |
+| [`docs/DATA_AUDIT_REPORT.md`](docs/DATA_AUDIT_REPORT.md) | Full data integrity audit |
+| [`docs/MODEL_SELECTION.md`](docs/MODEL_SELECTION.md) | 3-class bake-off rationale |
 | [`reports/ADNI_AD_Classifier_Report.pdf`](reports/ADNI_AD_Classifier_Report.pdf) | Formal report (PDF) |
 
 **101 analysis files generated** — 52 PNG plots + 46 CSV tables + 1 JSON summary + 1 MD report.

@@ -22,17 +22,17 @@ PYTHONPATH=src .venv/bin/pytest tests/ -v
 | Document | Location | What it covers |
 |---|---|---|
 | **README** | [`../README.md`](../README.md) | Project overview, quickstart, metrics, dataset, commands |
-| **Full Technical Documentation** | [`../DOCUMENTATION.md`](../DOCUMENTATION.md) | Complete technical + clinical documentation — pipeline, methodology, evaluation, SHAP, production architecture |
+| **Full Technical Documentation** | [`DOCUMENTATION.md`](DOCUMENTATION.md) | Complete technical + clinical documentation — pipeline, methodology, evaluation, SHAP, production architecture |
 | **Statistical Analysis Report** | [`../results/reports/ANALYSIS_REPORT.md`](../results/reports/ANALYSIS_REPORT.md) | All statistical findings — descriptive stats, correlations, Kruskal-Wallis, regression, classification, leakage audit |
-| **Visual Guide** | [`../ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md`](../ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md) | Research-grade interpretation of every figure — for medical/research audience |
+| **Visual Guide** | [`ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md`](ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md) | Research-grade interpretation of every figure — for medical/research audience |
 
 ### Model Reports
 
 | Document | Location | What it covers |
 |---|---|---|
-| **Binary Model Addendum** | [`../reports/BINARY_MODEL_ADDENDUM.md`](../reports/BINARY_MODEL_ADDENDUM.md) | Why binary model was built, bake-off results, final metrics, caveats |
-| **Data Audit Report** | [`../reports/DATA_AUDIT_REPORT.md`](../reports/DATA_AUDIT_REPORT.md) | Full data integrity audit — sentinel values, platform confound, MMSE missingness |
-| **Model Selection Rationale** | [`../reports/MODEL_SELECTION.md`](../reports/MODEL_SELECTION.md) | 3-class bake-off results and LightGBM vs Extra Trees decision |
+| **Binary Model Addendum** | [`BINARY_MODEL_ADDENDUM.md`](BINARY_MODEL_ADDENDUM.md) | Why binary model was built, bake-off results, final metrics, caveats |
+| **Data Audit Report** | [`DATA_AUDIT_REPORT.md`](DATA_AUDIT_REPORT.md) | Full data integrity audit — sentinel values, platform confound, MMSE missingness |
+| **Model Selection Rationale** | [`MODEL_SELECTION.md`](MODEL_SELECTION.md) | 3-class bake-off results and LightGBM vs Extra Trees decision |
 | **Full Classifier Report (PDF)** | [`../reports/ADNI_AD_Classifier_Report.pdf`](../reports/ADNI_AD_Classifier_Report.pdf) | Complete formal report on 3-class model development |
 | **Full Classifier Report (DOCX)** | [`../reports/ADNI_AD_Classifier_Report.docx`](../reports/ADNI_AD_Classifier_Report.docx) | Editable version of the formal report |
 
@@ -55,7 +55,7 @@ PYTHONPATH=src .venv/bin/pytest tests/ -v
 | Folder | Location | What it covers |
 |---|---|---|
 | **Development figures** | [`../reports/figures/`](../reports/figures/) | 35 figures from original model development (EDA, SHAP waterfalls, ROC, calibration) |
-| **Visual Guide images** | [`../ADNI_Research_Analysis_Visual_Guide/images/`](../ADNI_Research_Analysis_Visual_Guide/images/) | 57 annotated figures for GitHub/research presentation |
+| **Visual Guide images** | [`ADNI_Research_Analysis_Visual_Guide/images/`](ADNI_Research_Analysis_Visual_Guide/images/) | 57 annotated figures for GitHub/research presentation |
 
 ---
 
@@ -63,9 +63,9 @@ PYTHONPATH=src .venv/bin/pytest tests/ -v
 
 **For a new reader:**
 1. [`../README.md`](../README.md) — 5 min overview
-2. [`../DOCUMENTATION.md`](../DOCUMENTATION.md) — full technical depth
+2. [`DOCUMENTATION.md`](DOCUMENTATION.md) — full technical depth
 3. [`../results/reports/ANALYSIS_REPORT.md`](../results/reports/ANALYSIS_REPORT.md) — statistical findings
-4. [`../ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md`](../ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md) — figure-by-figure interpretation
+4. [`ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md`](ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md) — figure-by-figure interpretation
 
 **For a medical/clinical reader:**
 1. README → Model Card section

@@ -317,11 +317,15 @@ artifacts/
   models/                           final_model_binary.* + final_model_biomarker_only.* + metadata
   optuna_studies_binary/            Tuned hyperparameters for all 9 models (binary task)
   optuna_studies_biomarker_only/    Tuned hyperparameters (3-class task)
+docs/
+  INDEX.md                              Master documentation index
+  DOCUMENTATION.md                      Complete technical + clinical documentation
+  BINARY_MODEL_ADDENDUM.md              Binary model rationale + results
+  DATA_AUDIT_REPORT.md                  Standalone data audit
+  MODEL_SELECTION.md                    Bake-off rationale
+  ADNI_Research_Analysis_Visual_Guide/  57-image figure guide
 reports/
   ADNI_AD_Classifier_Report.docx/.pdf   Full report on 3-class development
-  docs/BINARY_MODEL_ADDENDUM.md         Binary model rationale + results
-  docs/DATA_AUDIT_REPORT.md             Standalone data audit
-  docs/MODEL_SELECTION.md               Bake-off rationale
   figures/                              All generated plots (28 figures)
 results/                            ← NEW: statistical analysis outputs
   statistics/                       Descriptive stats, Kruskal-Wallis, Mann-Whitney, MMSE

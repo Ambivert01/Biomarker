@@ -1,0 +1,10 @@
+column,sentinel_count,min_raw
+pT217_F,0,0.03
+AB42_F,3,-4.0
+AB40_F,2,-4.0
+AB42_AB40_F,3,-4.0
+pT217_AB42_F,3,-4.0
+NfL_Q,431,-5.0
+GFAP_Q,431,-5.0
+NfL_F,321,-4.0
+GFAP_F,321,-4.0

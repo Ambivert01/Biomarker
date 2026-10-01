@@ -1,0 +1,4 @@
+class,code,count,percentage,imbalance_ratio_vs_majority
+Control,1,343,38.58,1.0
+MCI,2,315,35.43,1.089
+Dementia,3,231,25.98,1.485

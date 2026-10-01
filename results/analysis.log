@@ -1,0 +1,152 @@
+2026-10-01 10:54:45,540 [INFO] run_analysis: ======================================================================
+2026-10-01 10:54:45,540 [INFO] run_analysis: ADNI Plasma Biomarker — Complete Statistical Analysis Pipeline
+2026-10-01 10:54:45,540 [INFO] run_analysis: ======================================================================
+2026-10-01 10:54:45,540 [INFO] run_analysis: Loading dataset...
+2026-10-01 10:54:45,583 [INFO] run_analysis: Dataset loaded: 889 rows × 17 cols
+2026-10-01 10:54:45,585 [INFO] run_analysis: Class distribution: {'Control': 343, 'MCI': 315, 'Dementia': 231}
+2026-10-01 10:54:45,585 [INFO] run_analysis: 
+[1/8] Running data quality analysis...
+2026-10-01 10:54:50,439 [INFO] analysis.data_quality: Data quality analysis complete → /home/ambivert/Downloads/adni_project/results/distributions
+2026-10-01 10:54:50,440 [INFO] run_analysis:   ✓ Data quality complete
+2026-10-01 10:54:50,440 [INFO] run_analysis: 
+[2/8] Running descriptive statistics...
+2026-10-01 10:54:50,548 [INFO] analysis.descriptive_statistics: Descriptive statistics complete → /home/ambivert/Downloads/adni_project/results/statistics
+2026-10-01 10:54:50,550 [INFO] run_analysis:   ✓ Descriptive statistics complete
+2026-10-01 10:54:50,550 [INFO] run_analysis: 
+[3/8] Running correlation analysis...
+2026-10-01 10:54:52,526 [INFO] analysis.correlation: Correlation analysis complete → /home/ambivert/Downloads/adni_project/results/correlations
+2026-10-01 10:54:52,526 [INFO] run_analysis:   ✓ Correlation analysis complete
+2026-10-01 10:54:52,526 [INFO] run_analysis: 
+[4/8] Running statistical tests...
+2026-10-01 10:54:53,486 [INFO] analysis.statistical_tests: Statistical tests complete → /home/ambivert/Downloads/adni_project/results/statistics
+2026-10-01 10:54:53,488 [INFO] run_analysis:   ✓ Statistical tests complete
+2026-10-01 10:54:53,488 [INFO] run_analysis: 
+[5/8] Running regression analysis...
+2026-10-01 10:55:00,492 [INFO] analysis.regression: Regression analysis complete → /home/ambivert/Downloads/adni_project/results/regression
+2026-10-01 10:55:00,493 [INFO] run_analysis:   ✓ Regression analysis complete
+2026-10-01 10:55:00,493 [INFO] run_analysis: 
+[6/8] Running classification analysis...
+2026-10-01 10:55:15,443 [INFO] analysis.classification: Binary model: accuracy=0.874, ROC-AUC=0.956
+2026-10-01 10:55:17,277 [INFO] analysis.classification: 3-class model: accuracy=0.612, macro-F1=0.597
+2026-10-01 10:55:17,685 [INFO] analysis.classification: Classification analysis complete → /home/ambivert/Downloads/adni_project/results/classification
+2026-10-01 10:55:17,685 [INFO] run_analysis:   ✓ Classification analysis complete
+2026-10-01 10:55:17,685 [INFO] run_analysis: 
+[7/8] Running feature analysis...
+2026-10-01 10:55:24,549 [INFO] analysis.feature_analysis: Feature analysis complete → /home/ambivert/Downloads/adni_project/results/feature_analysis
+2026-10-01 10:55:24,550 [INFO] run_analysis:   ✓ Feature analysis complete
+2026-10-01 10:55:24,550 [INFO] run_analysis: 
+[8/8] Running outlier analysis...
+2026-10-01 10:55:26,039 [INFO] analysis.outlier_analysis: Outlier analysis complete → /home/ambivert/Downloads/adni_project/results/outliers
+2026-10-01 10:55:26,040 [INFO] run_analysis:   ✓ Outlier analysis complete
+2026-10-01 10:55:26,040 [INFO] run_analysis: 
+[9/9] Running model comparison...
+2026-10-01 10:55:26,861 [INFO] analysis.model_comparison: Model comparison complete → /home/ambivert/Downloads/adni_project/results/model_comparison
+2026-10-01 10:55:26,862 [INFO] run_analysis:   ✓ Model comparison complete
+2026-10-01 10:55:26,863 [INFO] run_analysis: 
+======================================================================
+2026-10-01 10:55:26,863 [INFO] run_analysis: Analysis complete in 41.3 seconds
+2026-10-01 10:55:26,863 [INFO] run_analysis: Results saved to: /home/ambivert/Downloads/adni_project/results
+2026-10-01 10:55:26,863 [INFO] run_analysis: ======================================================================
+2026-10-01 10:55:26,864 [INFO] run_analysis: 
+Generated files (101 total):
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/analysis.log
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/classification/binary_cv_metrics.csv
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/classification/binary_model_metrics.csv
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/classification/calibration_curve_binary.png
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/classification/class_imbalance.png
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/classification/class_imbalance_report.csv
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/classification/confusion_matrix_binary.png
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/classification/confusion_matrix_three_class.png
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/classification/model_bakeoff_comparison.png
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/classification/pr_curve_binary.png
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/classification/pr_curve_three_class.png
+2026-10-01 10:55:26,865 [INFO] run_analysis:   results/classification/probability_distribution_binary.png
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/classification/roc_curve_binary.png
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/classification/roc_curve_three_class.png
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/classification/three_class_model_metrics.csv
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/classification/threshold_analysis_binary.csv
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/classification/threshold_analysis_binary.png
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/classification/threshold_analysis_three_class.csv
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/classification/threshold_analysis_three_class.png
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/correlations/binary_target_correlation_ranking.csv
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/correlations/correlation_kendall.csv
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/correlations/correlation_kendall_heatmap.png
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/correlations/correlation_pearson.csv
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/correlations/correlation_pearson_heatmap.png
+2026-10-01 10:55:26,866 [INFO] run_analysis:   results/correlations/correlation_pearson_significance.csv
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/correlations/correlation_spearman.csv
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/correlations/correlation_spearman_heatmap.png
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/correlations/correlation_spearman_significance.csv
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/correlations/highly_correlated_pairs.csv
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/correlations/target_feature_correlation_ranking.csv
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/correlations/target_feature_correlation_ranking.png
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/distributions/boxplots_by_group.png
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/distributions/categorical_cardinality.csv
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/distributions/categorical_frequency.png
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/distributions/missing_values.csv
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/distributions/missing_values_bar.png
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/distributions/missing_values_heatmap.png
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/distributions/numerical_distributions.png
+2026-10-01 10:55:26,867 [INFO] run_analysis:   results/distributions/outlier_iqr.csv
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/distributions/outlier_zscore.png
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/distributions/sentinel_counts.csv
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/distributions/skewness_kurtosis.csv
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/distributions/target_distribution.png
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/feature_analysis/bivariate_scatter_plots.png
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/feature_analysis/bivariate_violin_by_group.png
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/feature_analysis/pairplot_core_biomarkers.png
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/feature_analysis/pca_analysis.png
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/feature_analysis/pca_explained_variance.csv
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/feature_analysis/pca_loadings.csv
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/feature_analysis/rf_feature_importance.csv
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/feature_analysis/rf_feature_importance.png
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/feature_analysis/shap_feature_importance.png
+2026-10-01 10:55:26,868 [INFO] run_analysis:   results/feature_analysis/univariate_AB40_F.png
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/feature_analysis/univariate_AB42_AB40_F.png
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/feature_analysis/univariate_AB42_F.png
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/feature_analysis/univariate_GFAP_harmonized.png
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/feature_analysis/univariate_NfL_harmonized.png
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/feature_analysis/univariate_pT217_AB42_F.png
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/feature_analysis/univariate_pT217_F.png
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/model_comparison/all_models_bakeoff.csv
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/model_comparison/cv_accuracy_reliability.png
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/model_comparison/final_model_comparison.csv
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/model_comparison/final_model_comparison.png
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/model_comparison/leakage_audit.csv
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/outliers/extreme_values.png
+2026-10-01 10:55:26,869 [INFO] run_analysis:   results/outliers/outlier_before_after_gfap.png
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/outliers/outlier_summary.png
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/outliers/outliers_iqr.csv
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/outliers/outliers_isolation_forest.csv
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/outliers/outliers_isolation_forest_by_group.csv
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/outliers/outliers_zscore.csv
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/regression/log_regression_summary.csv
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/regression/multiple_regression_coefficients.csv
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/regression/multiple_regression_summary.csv
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/regression/regression_diagnostics_OLS.png
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/regression/regression_model_comparison.csv
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/regression/regression_model_comparison.png
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/regression/simple_linear_regression.csv
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/regression/simple_regression_AB40_F.png
+2026-10-01 10:55:26,870 [INFO] run_analysis:   results/regression/simple_regression_AB42_AB40_F.png
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/regression/simple_regression_AB42_F.png
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/regression/simple_regression_GFAP_harmonized.png
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/regression/simple_regression_NfL_harmonized.png
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/regression/vif_multicollinearity.csv
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/regression/vif_multicollinearity.png
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/reports/ANALYSIS_REPORT.md
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/reports/analysis_summary.json
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/statistics/binary_group_comparison.csv
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/statistics/binary_group_comparison.png
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/statistics/categorical_stats.csv
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/statistics/chi2_phase_group.csv
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/statistics/descriptive_stats_by_group.csv
+2026-10-01 10:55:26,871 [INFO] run_analysis:   results/statistics/descriptive_stats_overall.csv
+2026-10-01 10:55:26,872 [INFO] run_analysis:   results/statistics/kruskal_wallis_3group.csv
+2026-10-01 10:55:26,872 [INFO] run_analysis:   results/statistics/kruskal_wallis_summary.png
+2026-10-01 10:55:26,872 [INFO] run_analysis:   results/statistics/mannwhitney_pairwise.csv
+2026-10-01 10:55:26,872 [INFO] run_analysis:   results/statistics/mmse_by_group.csv
+2026-10-01 10:55:26,872 [INFO] run_analysis:   results/statistics/mmse_by_group.png
+2026-10-01 10:55:26,872 [INFO] run_analysis:   results/statistics/normality_shapiro.csv
+2026-10-01 10:55:26,872 [INFO] run_analysis:   results/statistics/phase_group_crosstab.csv
+2026-10-01 10:55:26,872 [INFO] run_analysis:   results/statistics/phase_group_crosstab_pct.csv

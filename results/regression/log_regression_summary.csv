@@ -1,0 +1,2 @@
+model,r_squared,note
+OLS on log1p(pTau-217),0.173,Log-transform reduces skewness (raw skew=3.53) and improves linearity

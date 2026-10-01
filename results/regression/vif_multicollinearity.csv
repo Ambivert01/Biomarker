@@ -1,0 +1,6 @@
+feature,vif,r_squared_with_others,concern
+AB42_F,8.371,0.8805,MODERATE (5-10)
+AB40_F,9.0909,0.89,MODERATE (5-10)
+AB42_AB40_F,4.4035,0.7729,OK (<5)
+NfL_harmonized,1.6513,0.3944,OK (<5)
+GFAP_harmonized,1.5762,0.3656,OK (<5)

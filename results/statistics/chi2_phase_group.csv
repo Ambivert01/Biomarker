@@ -1,0 +1,2 @@
+test,chi2_stat,p_value,dof,cramers_v,n,interpretation
+chi2_phase_vs_group,241.2214,0.0,8,0.3683,889,PHASE and GROUP are NOT independent (p<0.001) — major confound

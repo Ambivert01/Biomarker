@@ -1,0 +1,2 @@
+n_samples,n_anomalies,pct_anomalies,features_used
+886,45,5.08,"['pT217_F', 'AB42_F', 'AB40_F', 'AB42_AB40_F', 'pT217_AB42_F']"

@@ -1,0 +1,2 @@
+accuracy,balanced_accuracy,macro_f1,weighted_f1,precision_dementia,recall_dementia,f1_dementia,precision_control,recall_control,specificity,sensitivity,mcc,cohen_kappa,roc_auc,pr_auc,brier_score,n_test,n_dementia,n_control
+0.8736,0.8709,0.8691,0.8738,0.8333,0.8571,0.8451,0.902,0.8846,0.8846,0.8571,0.7385,0.7383,0.956,0.9352,0.0879,87,35,52

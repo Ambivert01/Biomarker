@@ -1,0 +1,13 @@
+check,risk,detail
+Target-derived features,NONE,"No features derived from DIAGNOSIS. Ratios (AB42/AB40, pTau/AB42) are biologically motivated, not computed from the label."
+MMSE in primary model,EXCLUDED,MMSE excluded from primary model. MMSE missingness is informative of diagnosis (54% missing for Control vs 18% for Dementia) — including it risks circular reasoning.
+PHASE / platform features,EXCLUDED,"PHASE and platform-count features excluded. Phase is a near-perfect proxy for diagnosis prevalence (chi2 p=1.3e-47). Including it would teach the model cohort identity, not biology."
+Cross-platform harmonization ratio,CONTROLLED,Harmonization ratio is fit inside Pipeline.fit() on each training fold only. Fallback constants from audit are used only when <15 dual-platform pairs exist in a fold.
+Rank transform reference distribution,CONTROLLED,Percentile rank references are fit on training fold only (ClinicalFeatureEngineer.fit()). Test/inference rows are scored against frozen training distribution via searchsorted.
+Imputer / scaler statistics,CONTROLLED,Median imputer and RobustScaler are fit inside Pipeline.fit() on training fold only. ColumnTransformer ensures no test-set statistics enter training.
+Train/test split before any fitting,CONTROLLED,15% stratified holdout is split before any pipeline fitting. Test set is touched exactly once for final evaluation.
+Duplicate patients across train/test,NONE,0 duplicate RIDs in dataset (verified). One row per patient. Patient-level stratified split ensures no patient appears in both train and test.
+Calibration on test set,NONE,CalibratedClassifierCV uses nested 5-fold CV on dev pool only. Test set never used for calibration fitting.
+Optuna HPO on test set,NONE,Optuna optimizes on dev pool 5-fold CV only. Test set is never used during hyperparameter search.
+Sentinel cleaning before split,NONE,SentinelToNaN is stateless (no fit-time statistics). Applying it before or after split produces identical results — no leakage possible.
+Future information in features,NONE,All biomarkers are from the same visit as the diagnosis (confirmed in data audit: 889/889 same-visit matches). No forward-looking features.

@@ -1,0 +1,11 @@
+feature,kruskal_H,p_value,eta_squared,significant_0.05,significant_0.001,n_total
+pT217_F,311.6954,0.0,0.3495,True,True,889
+AB42_AB40_F,64.0889,0.0,0.0703,True,True,886
+NfL_Q,102.5978,0.0,0.2211,True,True,458
+pT217_AB42_F,301.5688,0.0,0.3393,True,True,886
+GFAP_Q,94.7559,0.0,0.2039,True,True,458
+NfL_F,78.7675,0.0,0.1359,True,True,568
+MMSE_FINAL_SCORE,338.6029,0.0,0.6363,True,True,532
+GFAP_F,79.8316,0.0,0.1378,True,True,568
+AB40_F,16.0882,0.00032098,0.0159,True,True,887
+AB42_F,7.7748,0.02049855,0.0065,True,False,886

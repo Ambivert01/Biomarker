@@ -1,0 +1,10 @@
+feature,n_valid,lower_fence_1.5iqr,upper_fence_1.5iqr,n_outliers_1.5iqr,pct_outliers_1.5iqr,n_extreme_3iqr,pct_extreme_3iqr,max_value,note
+pT217_F,889,-0.543,1.209,41,4.61,9,1.01,5.555,Max=5.56 pg/mL — ~7× median; plausible in advanced AD; RETAIN
+AB42_F,886,11.7538,43.0237,13,1.47,1,0.11,118.44,Review recommended but no automatic removal
+AB40_F,887,142.0875,507.7875,32,3.61,7,0.79,1927.0,Max=1927 pg/mL — extreme; verify but plausible in outlier patients; RETAIN
+AB42_AB40_F,886,0.0493,0.1187,12,1.35,2,0.23,0.1652,Review recommended but no automatic removal
+pT217_AB42_F,886,-0.0208,0.0454,50,5.64,13,1.47,0.2151,Review recommended but no automatic removal
+NfL_Q,458,-10.7875,59.7125,18,3.93,9,1.97,278.0,Max=278 pg/mL — plausible; different scale from Fujirebio; RETAIN
+GFAP_Q,458,-111.6,519.2,12,2.62,2,0.44,816.7,Max=816.7 pg/mL — plausible on Quanterix scale; RETAIN
+NfL_F,568,-4.5425,53.8375,29,5.11,14,2.46,419.72,Max=419.7 pg/mL — extreme but plausible in severe neurodegeneration; RETAIN
+GFAP_F,568,-29.6375,166.8625,26,4.58,8,1.41,2478.1,Max=2478 pg/mL — clinically plausible in advanced neurodegeneration; RETAIN

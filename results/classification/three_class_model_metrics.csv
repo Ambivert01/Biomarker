@@ -1,0 +1,2 @@
+accuracy,balanced_accuracy,macro_f1,weighted_f1,mcc,cohen_kappa,roc_auc_macro,n_test,precision_Control,recall_Control,f1_Control,precision_MCI,recall_MCI,f1_MCI,precision_Dementia,recall_Dementia,f1_Dementia
+0.6119,0.6064,0.5972,0.5992,0.4125,0.4074,0.7621,134,0.6562,0.8077,0.7241,0.5143,0.383,0.439,0.6286,0.6286,0.6286

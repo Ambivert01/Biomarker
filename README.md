@@ -410,11 +410,17 @@ print(result.model_accuracy)  # {'point_estimate': 0.8736, 'ci_95_low': 0.8046, 
 
 ---
 
-## Full statistical analysis report
+## Documentation
 
-See [`results/reports/ANALYSIS_REPORT.md`](results/reports/ANALYSIS_REPORT.md) for the complete
-report covering all 13 sections: dataset description, data quality, descriptive statistics,
-correlation analysis, statistical tests, regression analysis, classification analysis,
-feature importance, outlier analysis, leakage audit, model comparison, limitations, and conclusion.
+| Document | What it covers |
+|---|---|
+| [`docs/INDEX.md`](docs/INDEX.md) | **Master index** — all documents, reports, outputs in one place |
+| [`DOCUMENTATION.md`](DOCUMENTATION.md) | Complete technical + clinical documentation |
+| [`results/reports/ANALYSIS_REPORT.md`](results/reports/ANALYSIS_REPORT.md) | Full statistical analysis (15 sections, 101 files) |
+| [`ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md`](ADNI_Research_Analysis_Visual_Guide/ADNI_RESEARCH_ANALYSIS_VISUAL_GUIDE.md) | Figure-by-figure research interpretation (57 images) |
+| [`reports/BINARY_MODEL_ADDENDUM.md`](reports/BINARY_MODEL_ADDENDUM.md) | Binary model rationale + results |
+| [`reports/DATA_AUDIT_REPORT.md`](reports/DATA_AUDIT_REPORT.md) | Full data integrity audit |
+| [`reports/MODEL_SELECTION.md`](reports/MODEL_SELECTION.md) | 3-class bake-off rationale |
+| [`reports/ADNI_AD_Classifier_Report.pdf`](reports/ADNI_AD_Classifier_Report.pdf) | Formal report (PDF) |
 
-**101 files generated** — 52 PNG plots + 46 CSV tables + 1 JSON summary + 1 MD report.
+**101 analysis files generated** — 52 PNG plots + 46 CSV tables + 1 JSON summary + 1 MD report.

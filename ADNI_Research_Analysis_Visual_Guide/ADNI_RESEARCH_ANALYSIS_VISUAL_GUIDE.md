@@ -1154,3 +1154,161 @@ These results describe the behavior of the analyzed ADNI data and models. They s
 
 All visualizations referenced by this document are stored in `images/` with descriptive filenames so the folder can be pushed directly to GitHub.
 
+---
+
+# 19. Additional Figures from Original Analysis Pipeline
+
+The following figures were generated during the original model development pipeline (`notebooks/`) and complement the statistical analysis figures above.
+
+---
+
+## 19.1 Target Class Distribution
+
+![Target class distribution](images/distribution_target_class.png)
+
+Shows the 3-class distribution (Control=343, MCI=315, Dementia=231) and confirms mild imbalance (1.48:1 max ratio). This is the starting point for understanding the dataset composition.
+
+---
+
+## 19.2 Biomarker Violin Plots by Group
+
+![Biomarker violin by group](images/distribution_violin_by_group.png)
+
+Violin plots show the full distribution shape (not just quartiles) for each biomarker across the three diagnostic groups. The wide right tails for pTau-217, NfL, and GFAP in the Dementia group are clearly visible.
+
+---
+
+## 19.3 Log-Transformed Biomarker Boxplots
+
+![Log biomarker boxplots](images/distribution_log_boxplots.png)
+
+After log1p transformation, the distributions become more symmetric. This justifies the use of log transforms in the modeling pipeline and shows that the transformation meaningfully reduces skewness.
+
+---
+
+## 19.4 Phase × Group Confound
+
+![Phase group confound](images/stats_phase_group_confound.png)
+
+Visualizes the strong association between ADNI phase and diagnostic group (χ²=241.2, Cramér's V=0.37, p=1.3×10⁻⁴⁷). Early phases (ADNI1, ADNI2) are dominated by Dementia; ADNI4 (64% of data) skews toward Control/MCI. This is the most critical data quality finding and the reason PHASE is excluded from all models.
+
+---
+
+## 19.5 Assay Platform Agreement
+
+![Assay platform agreement](images/stats_assay_platform_agreement.png)
+
+For the 138 patients with both Fujirebio and Quanterix measurements, this figure shows the cross-platform correlation. NfL: Pearson r=0.934, ratio=1.465×. GFAP: Pearson r=0.793, ratio=0.376×. The stable, group-invariant ratio licenses principled harmonization.
+
+---
+
+## 19.6 Mutual Information
+
+![Mutual information](images/feature_mutual_information.png)
+
+Mutual information measures non-linear statistical dependence between each feature and the diagnosis target. Complements the Spearman correlation ranking and confirms pTau-217 as the dominant signal.
+
+---
+
+## 19.7 Bootstrap Confidence Intervals
+
+### 3-Class Model
+
+![3-class bootstrap CI](images/classification_3class_bootstrap_ci.png)
+
+### Binary Model
+
+![Binary bootstrap CI](images/classification_binary_bootstrap_ci.png)
+
+Bootstrap CIs (1000 resamples) for key metrics. The wide intervals reflect the modest test set sizes (87 binary, 134 three-class). Every prediction output in the app includes these intervals so uncertainty is always visible.
+
+---
+
+## 19.8 Threshold Trade-off (3-Class Model)
+
+![Threshold tradeoff](images/classification_threshold_tradeoff.png)
+
+Shows the Dementia recall vs. precision trade-off across thresholds for the 3-class model. At the high-sensitivity threshold (P(Dementia)≥0.225), Dementia recall reaches ~82.9% at the cost of increased false positives.
+
+---
+
+## 19.9 SHAP Summary Plots (Per-Class)
+
+### Control class
+
+![SHAP summary Control](images/shap_summary_control.png)
+
+### MCI class
+
+![SHAP summary MCI](images/shap_summary_mci.png)
+
+### Dementia class
+
+![SHAP summary Dementia](images/shap_summary_dementia.png)
+
+Per-class SHAP summary plots show how each feature pushes predictions toward or away from each class. Red = high feature value, blue = low. For the Dementia class, high pTau-217 (red) strongly increases the Dementia prediction.
+
+---
+
+## 19.10 SHAP Global Importance (Original Pipeline)
+
+![SHAP global importance original](images/shap_global_importance_original.png)
+
+The original SHAP global importance from the development pipeline. Consistent with the statistical analysis results: pTau-217 in three forms (raw, log, rank) dominates.
+
+---
+
+## 19.11 SHAP Dependence Plots
+
+### pTau-217 (rank transform) vs Dementia
+
+![SHAP dependence pTau rank](images/shap_dependence_ptau_rank.png)
+
+### pTau-217 (log transform) vs Dementia
+
+![SHAP dependence pTau log](images/shap_dependence_ptau_log.png)
+
+### NfL (rank transform) vs Dementia
+
+![SHAP dependence NfL rank](images/shap_dependence_nfl_rank.png)
+
+Dependence plots show how SHAP values change as a feature value increases. The monotonic increase in SHAP value with pTau-217 rank confirms it is the primary driver of Dementia predictions.
+
+---
+
+## 19.12 SHAP Waterfall Plots (Individual Patient Examples)
+
+### Correctly predicted Control
+
+![SHAP waterfall correct Control](images/shap_waterfall_correct_control.png)
+
+### Correctly predicted Dementia
+
+![SHAP waterfall correct Dementia](images/shap_waterfall_correct_dementia.png)
+
+### False positive (Control predicted as Dementia)
+
+![SHAP waterfall false positive](images/shap_waterfall_false_positive.png)
+
+The false positive patient has elevated pTau-217 (0.83 pg/mL) — consistent with preclinical/prodromal AD where biomarker positivity precedes clinical symptom onset.
+
+### Missed Dementia (predicted Control)
+
+![SHAP waterfall missed Dementia](images/shap_waterfall_missed_dementia.png)
+
+The missed Dementia patient has low pTau-217 (~0.35 pg/mL, about 1/3 of typical Dementia) but elevated NfL — consistent with non-amyloid/non-tau pathology.
+
+### Missed Dementia (predicted MCI, 3-class model)
+
+![SHAP waterfall missed Dementia MCI](images/shap_waterfall_missed_dementia_mci.png)
+
+In the 3-class model, some Dementia patients are predicted as MCI rather than Control, reflecting the ambiguous boundary between these categories.
+
+---
+
+## Image directory
+
+All visualizations referenced by this document are stored in `images/` with descriptive filenames so the folder can be pushed directly to GitHub.
+
+**Total images: 57** (36 from original pipeline + 21 from statistical analysis pipeline)
+
